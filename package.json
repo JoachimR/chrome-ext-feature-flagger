@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "core-js": "^3.6.5",
+    "equal-vue": "^0.79.3",
     "query-string": "^4.3.4",
     "vue": "^3.0.0",
     "vuex": "^4.0.0-0"
