@@ -1,5 +1,4 @@
 export interface FeatureFlag {
-  id: string;
-  name: string;
+  parameter: string;
   active: boolean;
 }

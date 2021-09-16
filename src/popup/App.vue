@@ -1,25 +1,28 @@
 <template>
   <div>
-    <Popup :flags="flags" />
+    <Popup :feature-flags="featureFlags" />
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
 import Popup from "@/popup/Popup.vue";
+import { getCurrentTabUrl } from "@/popup/get-current-tab-url";
+import { FeatureFlag } from "@/model/feature-flag";
+import { collectFlags } from "@/logic/collect-flags";
 
 export default defineComponent({
   name: "App",
   components: { Popup },
-  data() {
+  data(): { featureFlags: FeatureFlag[] } {
     return {
-      flags: [
-        { id: "1", name: "hello", active: false },
-        { id: "2", name: "world", active: true },
-        { id: "3", name: "good", active: false },
-        { id: "4", name: "bye", active: false },
-      ],
+      featureFlags: [],
     };
+  },
+  mounted(): void {
+    getCurrentTabUrl((url) => {
+      this.featureFlags = collectFlags(url);
+    });
   },
 });
 </script>
