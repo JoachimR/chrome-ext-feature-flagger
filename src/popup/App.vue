@@ -8,8 +8,8 @@
 import { defineComponent } from "vue";
 import Popup from "@/popup/Popup.vue";
 import { getCurrentTabUrl } from "@/popup/get-current-tab-url";
-import { FeatureFlag } from "@/model/feature-flag";
-import { collectFlags } from "@/logic/collect-flags";
+import { FeatureFlag } from "@/model";
+import { collectFeatureFlags } from "@/logic/collect-feature-flags";
 
 export default defineComponent({
   name: "App",
@@ -21,7 +21,7 @@ export default defineComponent({
   },
   mounted(): void {
     getCurrentTabUrl((url) => {
-      this.featureFlags = collectFlags(url);
+      this.featureFlags = collectFeatureFlags(url);
     });
   },
 });
