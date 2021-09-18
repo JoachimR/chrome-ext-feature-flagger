@@ -49,7 +49,9 @@ describe("collect-feature-flags", () => {
   test.each(scenarios)(
     "https://foo.bar%s",
     (search: string, expected: FeatureFlags) => {
-      expect(collectFeatureFlags("https://foo.bar" + search)).toEqual(expected);
+      expect(
+        collectFeatureFlags(new URL("https://foo.bar" + search).searchParams)
+      ).toEqual(expected);
     }
   );
 });

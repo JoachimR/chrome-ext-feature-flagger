@@ -1,9 +1,9 @@
 import { createStore, Store } from "vuex";
 import { InjectionKey } from "vue";
-import { UrlHistoryRecord } from "@/model";
+import { HistoryUrlRecord } from "@/model";
 
 export interface State {
-  history: UrlHistoryRecord;
+  history: HistoryUrlRecord;
 }
 
 // define injection key

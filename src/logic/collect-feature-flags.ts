@@ -1,14 +1,12 @@
 import { FeatureFlag, FeatureFlags } from "@/model";
 
-export function collectFeatureFlags(url: string): FeatureFlags {
-  if (!url) {
-    return [];
-  }
+export function collectFeatureFlags(
+  searchParams: URLSearchParams
+): FeatureFlags {
   const featureFlags: FeatureFlags = [];
-  const urlParams = new URL(url).searchParams;
-  const keys = new Set(urlParams.keys());
+  const keys = new Set(searchParams.keys());
   for (const key of keys) {
-    const featureFlag = findFeatureFlag(key, urlParams.get(key));
+    const featureFlag = findFeatureFlag(key, searchParams.get(key));
     if (featureFlag !== undefined) {
       featureFlags.push(featureFlag);
     }

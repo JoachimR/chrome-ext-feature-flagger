@@ -7,4 +7,4 @@ export type FeatureFlags = FeatureFlag[];
 export type FeatureFlagsRecord = Record<SearchParameter, IsActive>;
 
 export type UrlHostname = string;
-export type UrlHistoryRecord = Record<UrlHostname, FeatureFlagsRecord>;
+export type HistoryUrlRecord = Record<UrlHostname, FeatureFlagsRecord>;
