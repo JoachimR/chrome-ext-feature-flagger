@@ -1,6 +1,6 @@
 import { createStore, Store } from "vuex";
 import { InjectionKey } from "vue";
-import { HistoryUrlRecord } from "@/model";
+import { HistoryUrlRecord } from "@/popup/model";
 
 export interface State {
   history: HistoryUrlRecord;

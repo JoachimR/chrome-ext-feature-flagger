@@ -1,12 +1,13 @@
-import { FeatureFlag, FeatureFlags } from "@/model";
+import { FeatureFlag } from "@/popup/model";
 
 export function collectFeatureFlags(
   searchParams: URLSearchParams
-): FeatureFlags {
-  const featureFlags: FeatureFlags = [];
+): FeatureFlag[] {
+  const featureFlags: FeatureFlag[] = [];
   const keys = new Set(searchParams.keys());
   for (const key of keys) {
-    const featureFlag = findFeatureFlag(key, searchParams.get(key));
+    const value = searchParams.get(key);
+    const featureFlag = findFeatureFlag(key, value);
     if (featureFlag !== undefined) {
       featureFlags.push(featureFlag);
     }
@@ -20,10 +21,10 @@ const findFeatureFlag = (
 ): FeatureFlag | undefined => {
   if (key) {
     if (isActiveFlagValue(value)) {
-      return [key, true];
+      return { parameter: key, isActive: true };
     }
     if (isInactiveFlagValue(value)) {
-      return [key, false];
+      return { parameter: key, isActive: false };
     }
   }
   return undefined;

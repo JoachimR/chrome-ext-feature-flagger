@@ -1,54 +1,54 @@
 import "jest";
 import { collectFeatureFlags } from "@/logic/collect-feature-flags";
-import { FeatureFlags } from "@/model";
+import { FeatureFlag } from "@/popup/model";
 
 describe("collect-feature-flags", () => {
-  const scenarios: [string, FeatureFlags][] = [
+  const scenarios: [string, FeatureFlag[]][] = [
     ["", []],
     ["abc=", []],
     ["?abc=", []],
     ["?abc=hello", []],
-    ["?abc=1", [["abc", true]]],
-    ["?abc=0", [["abc", false]]],
-    ["?abc=1&def=hello", [["abc", true]]],
-    ["?abc=0&def=hello", [["abc", false]]],
-    ["?abc=1&abc=hello", [["abc", true]]],
-    ["?abc=0&abc=hello", [["abc", false]]],
-    ["?abc=1&abc=0", [["abc", true]]],
-    ["?abc=0&abc=1", [["abc", false]]],
+    ["?abc=1", [{ parameter: "abc", isActive: true }]],
+    ["?abc=0", [{ parameter: "abc", isActive: false }]],
+    ["?abc=1&def=hello", [{ parameter: "abc", isActive: true }]],
+    ["?abc=0&def=hello", [{ parameter: "abc", isActive: false }]],
+    ["?abc=1&abc=hello", [{ parameter: "abc", isActive: true }]],
+    ["?abc=0&abc=hello", [{ parameter: "abc", isActive: false }]],
+    ["?abc=1&abc=0", [{ parameter: "abc", isActive: true }]],
+    ["?abc=0&abc=1", [{ parameter: "abc", isActive: false }]],
     [
       "?abc=1&def=1",
       [
-        ["abc", true],
-        ["def", true],
+        { parameter: "abc", isActive: true },
+        { parameter: "def", isActive: true },
       ],
     ],
     [
       "?abc=1&def=0",
       [
-        ["abc", true],
-        ["def", false],
+        { parameter: "abc", isActive: true },
+        { parameter: "def", isActive: false },
       ],
     ],
     [
       "?abc=0&def=1",
       [
-        ["abc", false],
-        ["def", true],
+        { parameter: "abc", isActive: false },
+        { parameter: "def", isActive: true },
       ],
     ],
     [
       "?abc=0&def=0",
       [
-        ["abc", false],
-        ["def", false],
+        { parameter: "abc", isActive: false },
+        { parameter: "def", isActive: false },
       ],
     ],
   ];
 
   test.each(scenarios)(
     "https://foo.bar%s",
-    (search: string, expected: FeatureFlags) => {
+    (search: string, expected: FeatureFlag[]) => {
       expect(
         collectFeatureFlags(new URL("https://foo.bar" + search).searchParams)
       ).toEqual(expected);

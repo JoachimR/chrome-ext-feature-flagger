@@ -1,13 +1,13 @@
-import { FeatureFlags, FeatureFlagsRecord } from "@/model";
+import { FeatureFlag, FeatureFlagsRecord } from "@/popup/model";
 
 export function featureFlagsToFeatureFlagsRecord(
-  featureFlags: FeatureFlags
+  featureFlags: FeatureFlag[]
 ): FeatureFlagsRecord {
   const record: FeatureFlagsRecord = {};
   for (const featureFlag of featureFlags) {
-    const key = featureFlag[0];
+    const key = featureFlag.parameter;
     if (!record[key]) {
-      record[key] = featureFlag[1];
+      record[key] = featureFlag;
     }
   }
   return record;

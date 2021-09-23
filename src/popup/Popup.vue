@@ -1,48 +1,42 @@
 <template>
   <div class="width-300px height-300px display-flex flex-direction-column">
-    <div class="height-10 display-flex align-items-center">
-      <h2 class="width-100">{{ urlHostname }}</h2>
-    </div>
-    <div class="height-60 overflow-auto">
-      <div
-        v-for="i in [
-          1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-          1, 1, 1, 1, 1, 1, 1,
-        ]"
-        :key="i"
-      >
-        <it-checkbox
-          v-for="flag of featureFlags"
-          :key="flag[0]"
-          type="primary"
-          :label="flag[0]"
-          v-model="flag[1]"
-        />
-      </div>
-    </div>
-    <div class="height-30 overflow-auto">
-      <h2 class="width-100">History</h2>
-      <div>{{ historyForUrlHostname }}</div>
-    </div>
+    <PopupMain
+      class="flex-1"
+      :feature-flags="featureFlags"
+      @update="onUpdate"
+    />
+    <PopupFooter
+      :show-submit="showSubmit"
+      :url="url"
+      :feature-flags="featureFlags"
+      :hostname="urlHostname"
+    />
   </div>
 </template>
 
 <script lang="ts">
 import { computed, defineComponent, ref } from "vue";
-import { deepCopy } from "@/utils/deep-copy";
 import {
   FeatureFlag,
   FeatureFlagsRecord,
   HistoryUrlRecord,
   UrlHostname,
-} from "@/model";
+} from "@/popup/model";
 import { useStore } from "vuex";
 import { key } from "@/store";
 import { collectFeatureFlags } from "@/logic/collect-feature-flags";
 import { featureFlagsToFeatureFlagsRecord } from "@/logic/feature-flags-to-feature-flags-record";
+import PopupMain from "@/popup/PopupMain.vue";
+import PopupFooter from "@/popup/PopupFooter.vue";
+import { deepCopy } from "@/utils/deep-copy";
+import { haveFeatureFlagsChanged } from "@/logic/have-feature-flags-changed";
 
 export default defineComponent({
   name: "Popup",
+  components: {
+    PopupFooter,
+    PopupMain,
+  },
   props: {
     url: {
       type: String,
@@ -53,6 +47,7 @@ export default defineComponent({
     const history: HistoryUrlRecord = store.state.history;
 
     const urlHostname = ref<UrlHostname | null>("");
+    const showSubmit = ref<boolean | null>(false);
     const featureFlags = ref<FeatureFlag[]>([]);
     const historyForUrlHostname = computed<FeatureFlagsRecord>(() => {
       const hostname = urlHostname.value;
@@ -99,11 +94,20 @@ export default defineComponent({
       }
     };
 
+    const onFeatureFlagsMutated = (newFeatureFlags: FeatureFlag[]) => {
+      if (haveFeatureFlagsChanged(featureFlags.value, newFeatureFlags)) {
+        featureFlags.value = newFeatureFlags;
+        showSubmit.value = true;
+      }
+    };
+
     return {
       urlHostname,
       featureFlags,
       historyForUrlHostname,
       onUrlChanged,
+      onFeatureFlagsMutated,
+      showSubmit,
     };
   },
   watch: {
@@ -112,43 +116,22 @@ export default defineComponent({
   mounted() {
     this.onUrlChanged();
   },
+  methods: {
+    onUpdate(featureFlags: FeatureFlag[]) {
+      this.onFeatureFlagsMutated(featureFlags);
+    },
+  },
 });
 </script>
-<style>
+<style scoped>
 .width-300px {
+  min-width: 300px;
   width: 300px;
+  max-width: 300px;
 }
-
 .height-300px {
   height: 300px;
-}
-
-.display-flex {
-  display: flex;
-}
-
-.flex-direction-column {
-  flex-direction: column;
-}
-
-.overflow-auto {
-  overflow: auto;
-}
-
-.align-items-center {
-  align-items: center;
-}
-.width-100 {
-  width: 100%;
-}
-
-.height-10 {
-  height: 10%;
-}
-.height-60 {
-  height: 60%;
-}
-.height-30 {
-  height: 30%;
+  min-height: 300px;
+  max-height: 300px;
 }
 </style>
