@@ -1,3 +1,3 @@
-browser.runtime.onMessage.addListener(function () {
-  console.log("Hello from the background");
-});
+import { startListeningForUrlChange } from "@/chrome";
+
+startListeningForUrlChange();

@@ -5,7 +5,11 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import Popup from "@/popup/Popup.vue";
-import { getCurrentTabUrl } from "@/popup/get-current-tab-url";
+import {
+  initPopup,
+  registerListenerForUrlChange,
+  unknownTabId,
+} from "@/chrome";
 
 export default defineComponent({
   name: "App",
@@ -13,12 +17,18 @@ export default defineComponent({
   data(): { url: string } {
     return {
       url: "",
+      tabId: unknownTabId,
     };
   },
   mounted(): void {
-    getCurrentTabUrl((url) => {
-      // this.url = "https://foo.bar?abc=0&def=1&qqq=1&a=b&abc=asdf";
+    initPopup((tabId: number, url: string) => {
+      this.tabId = tabId;
       this.url = url;
+    });
+    registerListenerForUrlChange((tabId: number, url: string) => {
+      if (this.tabId !== unknownTabId && this.tabId === tabId) {
+        this.url = url;
+      }
     });
   },
 });

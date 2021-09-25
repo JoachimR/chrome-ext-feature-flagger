@@ -16,7 +16,7 @@
 <script lang="ts">
 import { computed, defineComponent, toRefs } from "vue";
 import { FeatureFlag } from "@/popup/model";
-import { setTabUrl } from "@/popup/set-tab-url";
+import { reloadTabWithUrl } from "@/chrome";
 
 export default defineComponent({
   props: {
@@ -56,7 +56,7 @@ export default defineComponent({
   },
   methods: {
     onClick() {
-      setTabUrl(this.newUrl);
+      reloadTabWithUrl(this.newUrl);
     },
   },
 });

@@ -5,9 +5,7 @@
   "description": "A Vue Browser Extension",
   "default_locale": "en",
   "permissions": [
-    "tabs",
-    "<all_urls>",
-    "*://*/*"
+    "tabs"
   ],
   "icons": {
     "16": "icons/icon16.png",
@@ -19,8 +17,7 @@
   "background": {
     "scripts": [
       "js/background.js"
-    ],
-    "persistent": false
+    ]
   },
   "browser_action": {
     "default_popup": "popup.html",
