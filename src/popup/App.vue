@@ -14,7 +14,7 @@ import {
 export default defineComponent({
   name: "App",
   components: { Popup },
-  data(): { url: string } {
+  data() {
     return {
       url: "",
       tabId: unknownTabId,

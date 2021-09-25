@@ -10,6 +10,7 @@
       :url="url"
       :feature-flags="featureFlags"
       :hostname="urlHostname"
+      @add="onAddFeatureFlag"
     />
   </div>
 </template>
@@ -32,7 +33,6 @@ import { deepCopy } from "@/utils/deep-copy";
 import { haveFeatureFlagsChanged } from "@/logic/have-feature-flags-changed";
 
 export default defineComponent({
-  name: "Popup",
   components: {
     PopupFooter,
     PopupMain,
@@ -101,12 +101,31 @@ export default defineComponent({
       }
     };
 
+    const onFeatureFlagAdd = (newActiveParameter: string) => {
+      if (newActiveParameter) {
+        const index = featureFlags.value.findIndex(
+          (flag) => flag.parameter === newActiveParameter
+        );
+        if (index === -1) {
+          featureFlags.value.push({
+            parameter: newActiveParameter,
+            isActive: true,
+          });
+        } else {
+          if (!featureFlags.value[index].isActive) {
+            featureFlags.value[index].isActive = true;
+          }
+        }
+      }
+    };
+
     return {
       urlHostname,
       featureFlags,
       historyForUrlHostname,
       onUrlChanged,
       onFeatureFlagsMutated,
+      onFeatureFlagAdd,
       showSubmit,
     };
   },
@@ -119,6 +138,9 @@ export default defineComponent({
   methods: {
     onUpdate(featureFlags: FeatureFlag[]) {
       this.onFeatureFlagsMutated(featureFlags);
+    },
+    onAddFeatureFlag(parameter: string) {
+      this.onFeatureFlagAdd(parameter);
     },
   },
 });

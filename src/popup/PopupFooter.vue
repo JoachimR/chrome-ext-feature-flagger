@@ -1,14 +1,35 @@
 <template>
-  <div class="display-flex padding-horizontal-4px align-items-center">
-    <el-input :value="newUrl" readonly size="mini" />
-    <div class="margin-4px">
-      <el-button
-        type="primary"
-        icon="el-icon-refresh"
+  <div>
+    <div class="display-flex padding-horizontal-4px align-items-center">
+      <el-input
+        maxlength="200"
+        type="text"
+        placeholder="Add new feature flag"
         size="mini"
-        :disabled="!showSubmit"
-        @click="onClick"
+        v-model="newFeatureFlagParameter"
+        @keyup.enter="onAddNewFeatureFlagParameter"
       />
+      <div class="margin-4px">
+        <el-button
+          type="primary"
+          icon="el-icon-plus"
+          size="mini"
+          :disabled="!newFeatureFlagParameter"
+          @click="onAddNewFeatureFlagParameter"
+        />
+      </div>
+    </div>
+    <div class="display-flex padding-horizontal-4px align-items-center">
+      <el-input :value="newUrl" readonly size="mini" />
+      <div class="margin-4px">
+        <el-button
+          type="primary"
+          icon="el-icon-refresh"
+          size="mini"
+          :disabled="!showSubmit"
+          @click="onClickSubmit"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -19,6 +40,7 @@ import { FeatureFlag } from "@/popup/model";
 import { reloadTabWithUrl } from "@/chrome";
 
 export default defineComponent({
+  emits: ["add"],
   props: {
     url: {
       type: String,
@@ -54,25 +76,21 @@ export default defineComponent({
       newUrl,
     };
   },
+  data() {
+    return {
+      newFeatureFlagParameter: "",
+    };
+  },
   methods: {
-    onClick() {
+    onAddNewFeatureFlagParameter() {
+      if (this.newFeatureFlagParameter) {
+        this.$emit("add", this.newFeatureFlagParameter);
+        this.newFeatureFlagParameter = "";
+      }
+    },
+    onClickSubmit() {
       reloadTabWithUrl(this.newUrl);
     },
   },
 });
 </script>
-<style scoped>
-.text-align-center {
-  text-align: center;
-}
-
-.overflow-hidden {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.width-100 {
-  width: 100%;
-}
-</style>
