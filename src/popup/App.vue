@@ -12,7 +12,6 @@ import {
 } from "@/chrome";
 
 export default defineComponent({
-  name: "App",
   components: { Popup },
   data() {
     return {
