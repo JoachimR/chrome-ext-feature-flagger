@@ -1,31 +1,24 @@
 <template>
   <div>
     <div class="display-flex padding-horizontal-4px align-items-center">
-      <el-input
-        maxlength="200"
-        type="text"
-        placeholder="Add new feature flag"
-        size="mini"
+      <va-input
         v-model="newFeatureFlagParameter"
         @keyup.enter="onAddNewFeatureFlagParameter"
+        placeholder="Add new feature flag"
       />
       <div class="margin-4px">
-        <el-button
-          type="primary"
-          icon="el-icon-plus"
-          size="mini"
+        <va-button
+          icon="add"
           :disabled="!newFeatureFlagParameter"
           @click="onAddNewFeatureFlagParameter"
         />
       </div>
     </div>
     <div class="display-flex padding-horizontal-4px align-items-center">
-      <el-input :value="newUrl" readonly size="mini" />
+      <va-input :model-value="newUrl" readonly />
       <div class="margin-4px">
-        <el-button
-          type="primary"
-          icon="el-icon-refresh"
-          size="mini"
+        <va-button
+          icon="refresh"
           :disabled="!showSubmit"
           @click="onClickSubmit"
         />

@@ -1,13 +1,15 @@
 <template>
-  <el-tag class="hover-grab margin-4px" :type="type"> {{ name }} </el-tag>
+  <va-chip outline square closeable :color="type" class="hover-grab">
+    {{ name }}
+  </va-chip>
 </template>
 
 <script lang="ts">
 import { computed, defineComponent } from "vue";
 
 enum TagType {
-  inactive = "danger",
-  active = "success",
+  inactive = "#ef476f",
+  active = "#2C82E0",
 }
 
 export default defineComponent({
