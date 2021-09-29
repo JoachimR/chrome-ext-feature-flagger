@@ -111,9 +111,11 @@ export default defineComponent({
             parameter: newActiveParameter,
             isActive: true,
           });
+          showSubmit.value = true;
         } else {
           if (!featureFlags.value[index].isActive) {
             featureFlags.value[index].isActive = true;
+            showSubmit.value = true;
           }
         }
       }
