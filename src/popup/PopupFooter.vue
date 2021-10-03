@@ -31,6 +31,7 @@
 import { computed, defineComponent, toRefs } from "vue";
 import { FeatureFlag } from "@/popup/model";
 import { reloadTabWithUrl } from "@/chrome";
+import { collectFeatureFlags } from "@/logic/collect-feature-flags";
 
 export default defineComponent({
   emits: ["add"],
@@ -51,12 +52,23 @@ export default defineComponent({
 
     const newUrl = computed<URL | null>(() => {
       const currentUrl = urlRef.value;
-
       if (!currentUrl) {
         return null;
       }
       const url: URL = new URL(currentUrl);
       const featureFlags: FeatureFlag[] = featureFlagsRef.value;
+
+      const collectedFlags = collectFeatureFlags(url.searchParams);
+      for (const collectedFlag of collectedFlags) {
+        if (
+          !featureFlags.some(
+            (flag) => flag.parameter === collectedFlag.parameter
+          )
+        ) {
+          url.searchParams.delete(collectedFlag.parameter);
+        }
+      }
+
       for (const featureFlag of featureFlags) {
         url.searchParams.set(
           featureFlag.parameter,

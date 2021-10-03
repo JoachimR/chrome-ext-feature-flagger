@@ -1,10 +1,19 @@
 export type SearchParameter = string;
 export type IsActive = boolean;
 
-export type FeatureFlag = {
+export interface FeatureFlag {
   parameter: SearchParameter;
   isActive: IsActive;
-};
+}
+export interface ActiveFeatureFlag extends FeatureFlag {
+  isActive: true;
+}
+
+export function isActiveFeatureFlag(
+  featureFlag: FeatureFlag
+): featureFlag is ActiveFeatureFlag {
+  return featureFlag.isActive;
+}
 
 export type FeatureFlagsRecord = Record<SearchParameter, FeatureFlag>;
 

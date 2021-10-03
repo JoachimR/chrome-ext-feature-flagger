@@ -1,9 +1,12 @@
 <template>
-  <div class="width-300px height-300px display-flex flex-direction-column">
+  <div
+    class="width-300px height-300px display-flex flex-direction-column border"
+  >
     <PopupMain
       class="flex-1"
       :feature-flags="featureFlags"
       @update="onUpdate"
+      @close="onCloseFeatureFlag"
     />
     <PopupFooter
       :show-submit="showSubmit"
@@ -30,7 +33,7 @@ import { featureFlagsToFeatureFlagsRecord } from "@/logic/feature-flags-to-featu
 import PopupMain from "@/popup/PopupMain.vue";
 import PopupFooter from "@/popup/PopupFooter.vue";
 import { deepCopy } from "@/utils/deep-copy";
-import { haveFeatureFlagsChanged } from "@/logic/have-feature-flags-changed";
+import { haveActiveFeatureFlagsChanged } from "@/logic/have-active-feature-flags-changed";
 
 export default defineComponent({
   components: {
@@ -47,7 +50,7 @@ export default defineComponent({
     const history: HistoryUrlRecord = store.state.history;
 
     const urlHostname = ref<UrlHostname | null>("");
-    const showSubmit = ref<boolean | null>(false);
+    const originalFeatureFlags = ref<FeatureFlag[]>([]);
     const featureFlags = ref<FeatureFlag[]>([]);
     const historyForUrlHostname = computed<FeatureFlagsRecord>(() => {
       const hostname = urlHostname.value;
@@ -63,6 +66,7 @@ export default defineComponent({
     }) => {
       urlHostname.value = hostname;
       const collectedFlags: FeatureFlag[] = collectFeatureFlags(searchParams);
+      originalFeatureFlags.value = deepCopy<FeatureFlag[]>(collectedFlags);
       featureFlags.value = deepCopy<FeatureFlag[]>(collectedFlags);
       history[hostname] = featureFlagsToFeatureFlagsRecord(collectedFlags);
     };
@@ -95,9 +99,8 @@ export default defineComponent({
     };
 
     const onFeatureFlagsMutated = (newFeatureFlags: FeatureFlag[]) => {
-      if (haveFeatureFlagsChanged(featureFlags.value, newFeatureFlags)) {
+      if (haveActiveFeatureFlagsChanged(featureFlags.value, newFeatureFlags)) {
         featureFlags.value = newFeatureFlags;
-        showSubmit.value = true;
       }
     };
 
@@ -111,15 +114,28 @@ export default defineComponent({
             parameter: newActiveParameter,
             isActive: true,
           });
-          showSubmit.value = true;
         } else {
           if (!featureFlags.value[index].isActive) {
             featureFlags.value[index].isActive = true;
-            showSubmit.value = true;
           }
         }
       }
     };
+    const onFeatureFlagRemove = (parameter: string) => {
+      const index = featureFlags.value.findIndex(
+        (flag) => flag.parameter === parameter
+      );
+      if (index > -1) {
+        featureFlags.value.splice(index, 1);
+      }
+    };
+
+    const showSubmit = computed<boolean>(() =>
+      haveActiveFeatureFlagsChanged(
+        originalFeatureFlags.value,
+        featureFlags.value
+      )
+    );
 
     return {
       urlHostname,
@@ -128,6 +144,7 @@ export default defineComponent({
       onUrlChanged,
       onFeatureFlagsMutated,
       onFeatureFlagAdd,
+      onFeatureFlagRemove,
       showSubmit,
     };
   },
@@ -144,6 +161,9 @@ export default defineComponent({
     onAddFeatureFlag(parameter: string) {
       this.onFeatureFlagAdd(parameter);
     },
+    onCloseFeatureFlag(parameter: string) {
+      this.onFeatureFlagRemove(parameter);
+    },
   },
 });
 </script>
@@ -157,5 +177,8 @@ export default defineComponent({
   height: 300px;
   min-height: 300px;
   max-height: 300px;
+}
+.border {
+  border: 3px solid #154ec1;
 }
 </style>

@@ -1,5 +1,12 @@
 <template>
-  <va-chip outline square closeable :color="type" class="hover-grab">
+  <va-chip
+    closeable
+    v-model="show"
+    outline
+    square
+    :color="type"
+    class="hover-grab"
+  >
     {{ name }}
   </va-chip>
 </template>
@@ -13,7 +20,7 @@ enum TagType {
 }
 
 export default defineComponent({
-  name: "Tag",
+  emits: ["close"],
   props: {
     name: {
       type: String,
@@ -22,11 +29,20 @@ export default defineComponent({
       type: Boolean,
     },
   },
-  setup(props) {
+  setup(props, context) {
     const type = computed<TagType>(() => {
       return props.active ? TagType.active : TagType.inactive;
     });
-    return { type };
+
+    const show = computed<boolean>({
+      get: (): boolean => true,
+      set: (newValue: boolean) => {
+        if (!newValue) {
+          context.emit("close", props.name);
+        }
+      },
+    });
+    return { type, show };
   },
 });
 </script>

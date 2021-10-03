@@ -1,5 +1,9 @@
 <template>
-  <TransferTags :items="tagItems" @update="onTagsModified" />
+  <TransferTags
+    :items="tagItems"
+    @update="onTagsModified"
+    @close="onCloseTag"
+  />
 </template>
 
 <script lang="ts">
@@ -16,7 +20,7 @@ export default defineComponent({
       type: Object as FeatureFlag[],
     },
   },
-  emits: ["update"],
+  emits: ["update", "close"],
   setup(props) {
     const tagItems = ref<TagItem[]>([]);
     const onNewFeatureFlags = () => {
@@ -43,6 +47,9 @@ export default defineComponent({
   methods: {
     onTagsModified(tags: TagItem[]) {
       this.$emit("update", tags.map(tagItemToFeatureFlag));
+    },
+    onCloseTag(name: string) {
+      this.$emit("close", name);
     },
   },
 });

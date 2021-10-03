@@ -11,6 +11,7 @@
         :key="element.id"
         :name="element.name"
         :active="false"
+        @close="onCloseTag"
       />
     </draggable>
     <draggable
@@ -24,6 +25,7 @@
         :key="element.id"
         :name="element.name"
         :active="true"
+        @close="onCloseTag"
       />
     </draggable>
   </div>
@@ -46,7 +48,7 @@ export default defineComponent({
       type: Object as TagItem[],
     },
   },
-  emits: ["update"],
+  emits: ["update", "close"],
   setup(props) {
     const group1 = ref<TagItem[]>([]);
     const group2 = ref<TagItem[]>([]);
@@ -71,6 +73,9 @@ export default defineComponent({
   methods: {
     onCurrentItemsChanged(value: TagItem[]) {
       this.$emit("update", value);
+    },
+    onCloseTag(name: string) {
+      this.$emit("close", name);
     },
   },
   computed: {
