@@ -1,34 +1,48 @@
 <template>
-  <Popup :url="url" />
+  <w-app>
+    <Popup :info="info" />
+  </w-app>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import Popup from "@/popup/Popup.vue";
+import { defineComponent, onMounted, ref } from "vue";
+import Popup, { InfoProp } from "@/popup/Popup.vue";
 import {
   initPopup,
   registerListenerForUrlChange,
+  TabId,
   unknownTabId,
-} from "@/chrome";
+} from "@/chrome/tabs";
+import { loadStoredFeatureFlags } from "@/chrome/storage";
+import { FeatureFlag } from "@/popup/model";
 
 export default defineComponent({
   components: { Popup },
-  data() {
-    return {
+  setup() {
+    const tabIdRef = ref<TabId>(unknownTabId);
+    const infoRef = ref<InfoProp>({
       url: "",
-      tabId: unknownTabId,
-    };
-  },
-  mounted(): void {
-    initPopup((tabId: number, url: string) => {
-      this.tabId = tabId;
-      this.url = url;
+      storedFeatureFlags: [],
     });
-    registerListenerForUrlChange((tabId: number, url: string) => {
-      if (this.tabId !== unknownTabId && this.tabId === tabId) {
-        this.url = url;
-      }
+
+    onMounted(() => {
+      initPopup((tabId: number, url: string) => {
+        tabIdRef.value = tabId;
+        loadStoredFeatureFlags(url, (result: FeatureFlag[]) => {
+          infoRef.value = { url, storedFeatureFlags: result };
+        });
+      });
+
+      registerListenerForUrlChange((tabId: number, url: string) => {
+        if (tabIdRef.value !== unknownTabId && tabIdRef.value === tabId) {
+          loadStoredFeatureFlags(url, (result) => {
+            infoRef.value = { url, storedFeatureFlags: result };
+          });
+        }
+      });
     });
+
+    return { tabId: tabIdRef, info: infoRef };
   },
 });
 </script>
@@ -52,6 +66,9 @@ body {
 .justify-flex-end {
   justify-content: flex-end;
 }
+.justify-center {
+  justify-content: center;
+}
 .justify-space-between {
   justify-content: space-between;
 }
@@ -65,13 +82,23 @@ body {
   overflow: auto;
 }
 .border-bottom {
-  border-bottom: 1px solid #e9e9eb;
+  border-bottom: 1px solid #1C3967;
 }
 .margin-left-4px {
   margin: 4px;
 }
+.margin-2px {
+  margin: 2px;
+}
 .margin-4px {
   margin: 4px;
+}
+.padding-right-8px {
+  padding-right: 8px;
+}
+.margin-vertical-2px {
+  margin-top: 2px;
+  margin-bottom: 2px;
 }
 .padding-4px {
   padding: 4px;
@@ -87,5 +114,9 @@ body {
 .padding-horizontal-8px {
   padding-left: 8px;
   padding-right: 8px;
+}
+
+.display-inline {
+  display: inline;
 }
 </style>

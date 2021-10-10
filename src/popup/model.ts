@@ -23,8 +23,8 @@ export type HistoryUrlRecord = Record<UrlHostname, FeatureFlagsRecord>;
 export type TagId = string;
 
 export enum TagItemGroup {
-  Group1,
-  Group2,
+  Inactive = "inactive",
+  Active = "active",
 }
 export interface TagItem {
   id: TagId;

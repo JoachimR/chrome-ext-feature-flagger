@@ -1,26 +1,29 @@
 <template>
   <div>
     <div class="display-flex padding-horizontal-4px align-items-center">
-      <va-input
+      <w-input
         v-model="newFeatureFlagParameter"
         @keyup.enter="onAddNewFeatureFlagParameter"
-        placeholder="Add new feature flag"
-      />
+      >
+        Add new feature flag
+      </w-input>
       <div class="margin-4px">
-        <va-button
-          icon="add"
+        <w-button
+          bg-color="primary"
+          icon="mdi mdi-plus"
           :disabled="!newFeatureFlagParameter"
           @click="onAddNewFeatureFlagParameter"
         />
       </div>
     </div>
     <div class="display-flex padding-horizontal-4px align-items-center">
-      <va-input :model-value="newUrl" readonly />
+      <w-input :model-value="newUrl" readonly />
       <div class="margin-4px">
-        <va-button
-          icon="refresh"
+        <w-button
+          bg-color="success"
+          icon="mdi mdi-refresh"
           :disabled="!showSubmit"
-          @click="onClickSubmit"
+          @click="onSubmit"
         />
       </div>
     </div>
@@ -30,7 +33,7 @@
 <script lang="ts">
 import { computed, defineComponent, toRefs } from "vue";
 import { FeatureFlag } from "@/popup/model";
-import { reloadTabWithUrl } from "@/chrome";
+import { reloadTabWithUrl } from "@/chrome/tabs";
 import { collectFeatureFlags } from "@/logic/collect-feature-flags";
 
 export default defineComponent({
@@ -43,7 +46,7 @@ export default defineComponent({
       type: Boolean,
     },
     featureFlags: {
-      type: Object as FeatureFlag[],
+      type: Object,
     },
   },
   setup(props) {
@@ -56,35 +59,39 @@ export default defineComponent({
         return null;
       }
       const url: URL = new URL(currentUrl);
-      const featureFlags: FeatureFlag[] = featureFlagsRef.value;
+      const featureFlags = featureFlagsRef.value as FeatureFlag[];
 
       const collectedFlags = collectFeatureFlags(url.searchParams);
       for (const collectedFlag of collectedFlags) {
-        if (
-          !featureFlags.some(
-            (flag) => flag.parameter === collectedFlag.parameter
-          )
-        ) {
+        let flag = featureFlags.find(
+          (flag) => flag.parameter === collectedFlag.parameter
+        );
+        if (!flag || !flag.isActive) {
           url.searchParams.delete(collectedFlag.parameter);
         }
       }
 
-      for (const featureFlag of featureFlags) {
-        url.searchParams.set(
-          featureFlag.parameter,
-          featureFlag.isActive ? 1 : 0
-        );
+      for (const featureFlag of featureFlags.filter((flag) => flag.isActive)) {
+        url.searchParams.set(featureFlag.parameter, "1");
       }
+      url.searchParams.sort();
       return url;
     });
+
+    const onSubmit = () => {
+      const url = newUrl.value;
+      if (url !== null) {
+        reloadTabWithUrl(url);
+      }
+    };
+
     return {
       newUrl,
+      onSubmit,
     };
   },
   data() {
-    return {
-      newFeatureFlagParameter: "",
-    };
+    return { newFeatureFlagParameter: "" };
   },
   methods: {
     onAddNewFeatureFlagParameter() {
@@ -92,9 +99,6 @@ export default defineComponent({
         this.$emit("add", this.newFeatureFlagParameter);
         this.newFeatureFlagParameter = "";
       }
-    },
-    onClickSubmit() {
-      reloadTabWithUrl(this.newUrl);
     },
   },
 });

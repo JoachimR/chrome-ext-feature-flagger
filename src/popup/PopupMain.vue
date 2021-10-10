@@ -7,42 +7,42 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, watch } from "vue";
+import { defineComponent, onMounted, ref, watch } from "vue";
 import { FeatureFlag, TagItem } from "@/popup/model";
-import TransferTags from "@/popup/TransferTags.vue";
 import { tagItemToFeatureFlag } from "@/logic/tag-item-to-feature-flag";
 import { featureFlagToTagItem } from "@/logic/feature-flag-to-tag-item";
+import TransferTags from "@/popup/TransferTags.vue";
 
 export default defineComponent({
   components: { TransferTags },
   props: {
     featureFlags: {
-      type: Object as FeatureFlag[],
+      type: Object,
     },
   },
   emits: ["update", "close"],
   setup(props) {
     const tagItems = ref<TagItem[]>([]);
-    const onNewFeatureFlags = () => {
-      const flags = props.featureFlags ?? [];
+    const onNewFeatureFlags = (featureFlags: FeatureFlag[]) => {
+      const flags = featureFlags ?? [];
       tagItems.value = flags.map(featureFlagToTagItem);
     };
 
     watch(
       () => props.featureFlags,
-      () => {
-        onNewFeatureFlags();
+      (featureFlags) => {
+        onNewFeatureFlags((featureFlags ?? []) as FeatureFlag[]);
       },
       { deep: true }
     );
 
+    onMounted(() => {
+      onNewFeatureFlags((props.featureFlags ?? []) as FeatureFlag[]);
+    });
+
     return {
       tagItems,
-      onNewFeatureFlags,
     };
-  },
-  mounted() {
-    this.onNewFeatureFlags();
   },
   methods: {
     onTagsModified(tags: TagItem[]) {

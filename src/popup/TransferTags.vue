@@ -1,29 +1,27 @@
 <template>
   <div class="display-flex flex-direction-column">
     <draggable
-      class="height-35 overflow-auto border-bottom padding-4px"
+      class="height-100px overflow-auto border-bottom padding-4px"
       v-model="group1"
       group="tags"
-      :sort="false"
     >
       <Tag
+        :name="element.name"
         v-for="element in group1"
         :key="element.id"
-        :name="element.name"
         :active="false"
         @close="onCloseTag"
       />
     </draggable>
     <draggable
-      class="height-65 overflow-auto padding-4px"
+      class="flex-grow-1 overflow-auto padding-4px"
       v-model="group2"
       group="tags"
-      :sort="false"
     >
       <Tag
+        :name="element.name"
         v-for="element in group2"
         :key="element.id"
-        :name="element.name"
         :active="true"
         @close="onCloseTag"
       />
@@ -32,7 +30,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { computed, defineComponent, onMounted, ref, toRefs, watch } from "vue";
 import { VueDraggableNext } from "vue-draggable-next";
 import Tag from "@/popup/Tag.vue";
 import { TagItem, TagItemGroup } from "@/popup/model";
@@ -45,65 +43,76 @@ export default defineComponent({
   },
   props: {
     items: {
-      type: Object as TagItem[],
+      type: Object,
     },
   },
   emits: ["update", "close"],
-  setup(props) {
+  setup(props, context) {
+    const items = toRefs(props).items;
+
     const group1 = ref<TagItem[]>([]);
     const group2 = ref<TagItem[]>([]);
+
     const onNewItems = () => {
-      group1.value = props.items.filter(
-        (item: TagItem) => item.group === TagItemGroup.Group1
+      group1.value = (items.value as TagItem[]).filter(
+        (item: TagItem) => item.group === TagItemGroup.Inactive
       );
-      group2.value = props.items.filter(
-        (item: TagItem) => item.group === TagItemGroup.Group2
+
+      group2.value = (items.value as TagItem[]).filter(
+        (item: TagItem) => item.group === TagItemGroup.Active
       );
     };
+
+    const currentItems = computed<TagItem[]>(() =>
+      [
+        ...group1.value.map((item) => ({
+          ...item,
+          group: TagItemGroup.Inactive,
+        })),
+        ...group2.value.map((item) => ({
+          ...item,
+          group: TagItemGroup.Active,
+        })),
+      ].sort((a: TagItem, b: TagItem) => sortByName(a.name, b.name))
+    );
+
+    watch(
+      () => currentItems,
+      (value) => {
+        context.emit("update", value.value);
+      },
+      { deep: true }
+    );
+
+    watch(
+      () => items,
+      () => {
+        onNewItems();
+      },
+      { deep: true }
+    );
+
+    const onCloseTag = (name: string) => {
+      context.emit("close", name);
+    };
+
+    onMounted(() => {
+      onNewItems();
+    });
+
     return {
       group1,
       group2,
-      onNewItems,
+      onCloseTag,
     };
   },
   watch: {
     items: "onNewItems",
-    currentItems: "onCurrentItemsChanged",
-  },
-  methods: {
-    onCurrentItemsChanged(value: TagItem[]) {
-      this.$emit("update", value);
-    },
-    onCloseTag(name: string) {
-      this.$emit("close", name);
-    },
-  },
-  computed: {
-    currentItems: {
-      get(): TagItem[] {
-        return [
-          ...this.group1.map((item) => ({
-            ...item,
-            group: TagItemGroup.Group1,
-          })),
-          ...this.group2.map((item) => ({
-            ...item,
-            group: TagItemGroup.Group2,
-          })),
-        ].sort(sortByName);
-      },
-    },
-  },
-  mounted() {
-    this.onNewItems();
   },
 });
 </script>
 <style scoped>
-.height-35 {
-  height: 35%;
-}
-.height-65 {
-  height: 65%;
+.height-100px {
+  height: 100px;
 }
 </style>

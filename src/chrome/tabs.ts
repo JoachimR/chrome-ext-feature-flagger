@@ -1,5 +1,6 @@
 /// <reference types="chrome"/>
 
+export type TabId = number;
 export const unknownTabId = -1;
 
 export function startListeningForUrlChange(): void {

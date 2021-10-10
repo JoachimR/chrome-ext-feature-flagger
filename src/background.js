@@ -1,3 +1,3 @@
-import { startListeningForUrlChange } from "@/chrome";
+import { startListeningForUrlChange } from "./chrome/tabs";
 
 startListeningForUrlChange();

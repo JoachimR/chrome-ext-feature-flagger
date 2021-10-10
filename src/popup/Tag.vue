@@ -1,23 +1,19 @@
 <template>
-  <va-chip
-    closeable
-    v-model="show"
-    outline
-    square
-    :color="type"
-    class="hover-grab"
-  >
-    {{ name }}
-  </va-chip>
+  <w-tag class="margin-2px" outline :color="bgcolor">
+    <span class="hover-grab padding-right-8px">{{ name }}</span>
+
+    <w-button
+      :bg-color="bgcolor"
+      :color="color"
+      icon="mdi mdi-close"
+      @click="onClose"
+      sm
+    />
+  </w-tag>
 </template>
 
 <script lang="ts">
 import { computed, defineComponent } from "vue";
-
-enum TagType {
-  inactive = "#ef476f",
-  active = "#2C82E0",
-}
 
 export default defineComponent({
   emits: ["close"],
@@ -30,19 +26,18 @@ export default defineComponent({
     },
   },
   setup(props, context) {
-    const type = computed<TagType>(() => {
-      return props.active ? TagType.active : TagType.inactive;
+    const bgcolor = computed<string>(() => {
+      return props.active ? "primary" : "grey-light2";
+    });
+    const color = computed<string>(() => {
+      return props.active ? "#fff" : "primary";
     });
 
-    const show = computed<boolean>({
-      get: (): boolean => true,
-      set: (newValue: boolean) => {
-        if (!newValue) {
-          context.emit("close", props.name);
-        }
-      },
-    });
-    return { type, show };
+    const onClose = () => {
+      context.emit("close", props.name);
+    };
+
+    return { bgcolor, color, onClose };
   },
 });
 </script>

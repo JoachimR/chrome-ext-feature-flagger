@@ -10,7 +10,7 @@
     />
     <PopupFooter
       :show-submit="showSubmit"
-      :url="url"
+      :url="info.url"
       :feature-flags="featureFlags"
       :hostname="urlHostname"
       @add="onAddFeatureFlag"
@@ -19,21 +19,20 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref } from "vue";
-import {
-  FeatureFlag,
-  FeatureFlagsRecord,
-  HistoryUrlRecord,
-  UrlHostname,
-} from "@/popup/model";
-import { useStore } from "vuex";
-import { key } from "@/store";
+import { computed, defineComponent, onMounted, ref, watch } from "vue";
+import { FeatureFlag, UrlHostname } from "@/popup/model";
 import { collectFeatureFlags } from "@/logic/collect-feature-flags";
-import { featureFlagsToFeatureFlagsRecord } from "@/logic/feature-flags-to-feature-flags-record";
 import PopupMain from "@/popup/PopupMain.vue";
 import PopupFooter from "@/popup/PopupFooter.vue";
 import { deepCopy } from "@/utils/deep-copy";
 import { haveActiveFeatureFlagsChanged } from "@/logic/have-active-feature-flags-changed";
+import { storeFeatureFlags } from "@/chrome/storage";
+import { haveFeatureFlagsChanged } from "@/logic/have-feature-flags-changed";
+
+export type InfoProp = {
+  url: string;
+  storedFeatureFlags: FeatureFlag[];
+};
 
 export default defineComponent({
   components: {
@@ -41,34 +40,41 @@ export default defineComponent({
     PopupMain,
   },
   props: {
-    url: {
-      type: String,
-    },
+    info: Object,
   },
   setup(props) {
-    const store = useStore(key);
-    const history: HistoryUrlRecord = store.state.history;
-
     const urlHostname = ref<UrlHostname | null>("");
-    const originalFeatureFlags = ref<FeatureFlag[]>([]);
+    let originalFeatureFlags: FeatureFlag[] = [];
+    // eslint-disable-next-line no-undef
     const featureFlags = ref<FeatureFlag[]>([]);
-    const historyForUrlHostname = computed<FeatureFlagsRecord>(() => {
-      const hostname = urlHostname.value;
-      return hostname ? history[hostname] : {};
-    });
 
-    const onValidUrl = ({
-      hostname,
-      searchParams,
-    }: {
-      hostname: string;
-      searchParams: URLSearchParams;
-    }) => {
+    const onValidUrl = (
+      {
+        hostname,
+        searchParams,
+      }: {
+        hostname: string;
+        searchParams: URLSearchParams;
+      },
+      storedFeatureFlags: FeatureFlag[]
+    ) => {
       urlHostname.value = hostname;
       const collectedFlags: FeatureFlag[] = collectFeatureFlags(searchParams);
-      originalFeatureFlags.value = deepCopy<FeatureFlag[]>(collectedFlags);
+      originalFeatureFlags = deepCopy<FeatureFlag[]>(collectedFlags);
       featureFlags.value = deepCopy<FeatureFlag[]>(collectedFlags);
-      history[hostname] = featureFlagsToFeatureFlagsRecord(collectedFlags);
+
+      for (let storedFeatureFlag of storedFeatureFlags) {
+        if (
+          !featureFlags.value.some(
+            (flag) => flag.parameter === storedFeatureFlag.parameter
+          )
+        ) {
+          featureFlags.value.push({
+            parameter: storedFeatureFlag.parameter,
+            isActive: false,
+          });
+        }
+      }
     };
     const onInvalidUrl = () => {
       urlHostname.value = null;
@@ -89,17 +95,8 @@ export default defineComponent({
       return undefined;
     };
 
-    const onUrlChanged = () => {
-      const validUrl = extractValidUrl(props.url);
-      if (validUrl) {
-        onValidUrl(validUrl);
-      } else {
-        onInvalidUrl();
-      }
-    };
-
     const onFeatureFlagsMutated = (newFeatureFlags: FeatureFlag[]) => {
-      if (haveActiveFeatureFlagsChanged(featureFlags.value, newFeatureFlags)) {
+      if (haveFeatureFlagsChanged(featureFlags.value, newFeatureFlags)) {
         featureFlags.value = newFeatureFlags;
       }
     };
@@ -130,29 +127,58 @@ export default defineComponent({
       }
     };
 
-    const showSubmit = computed<boolean>(() =>
-      haveActiveFeatureFlagsChanged(
-        originalFeatureFlags.value,
+    const showSubmit = computed<boolean>(() => {
+      return haveActiveFeatureFlagsChanged(
+        originalFeatureFlags,
         featureFlags.value
-      )
+      );
+    });
+
+    function applyNewInfo(info: InfoProp) {
+      const validUrl = extractValidUrl(info.url);
+      if (validUrl) {
+        onValidUrl(validUrl, info.storedFeatureFlags);
+      } else {
+        onInvalidUrl();
+      }
+    }
+
+    watch(
+      () => props.info,
+      (info) => {
+        if (info) {
+          applyNewInfo(info as InfoProp);
+        }
+      },
+      { deep: true }
     );
+
+    watch(
+      () => [...featureFlags.value],
+      (newFeatureFlags) => {
+        if (haveFeatureFlagsChanged(originalFeatureFlags, newFeatureFlags)) {
+          if (urlHostname.value !== null) {
+            storeFeatureFlags(urlHostname.value, deepCopy(newFeatureFlags));
+          }
+        }
+      },
+      { deep: true }
+    );
+
+    onMounted(() => {
+      if (props.info) {
+        applyNewInfo(props.info as InfoProp);
+      }
+    });
 
     return {
       urlHostname,
       featureFlags,
-      historyForUrlHostname,
-      onUrlChanged,
+      showSubmit,
       onFeatureFlagsMutated,
       onFeatureFlagAdd,
       onFeatureFlagRemove,
-      showSubmit,
     };
-  },
-  watch: {
-    url: "onUrlChanged",
-  },
-  mounted() {
-    this.onUrlChanged();
   },
   methods: {
     onUpdate(featureFlags: FeatureFlag[]) {
@@ -179,6 +205,6 @@ export default defineComponent({
   max-height: 300px;
 }
 .border {
-  border: 3px solid #154ec1;
+  border: 3px solid #1c3967;
 }
 </style>
