@@ -3,7 +3,7 @@
     class="width-300px height-300px display-flex flex-direction-column border"
   >
     <PopupMain
-      class="flex-1"
+      class="flex-1 overflow-y-hidden"
       :feature-flags="featureFlags"
       @update="onUpdate"
       @close="onCloseFeatureFlag"
@@ -205,6 +205,9 @@ export default defineComponent({
   max-height: 300px;
 }
 .border {
-  border: 3px solid #1c3967;
+  border: 5px solid #1c3967;
+}
+.overflow-y-hidden {
+  overflow-y: hidden;
 }
 </style>

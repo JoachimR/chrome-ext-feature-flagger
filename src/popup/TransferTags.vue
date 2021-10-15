@@ -1,7 +1,7 @@
 <template>
-  <div class="display-flex flex-direction-column">
+  <div class="display-flex border-bottom">
     <draggable
-      class="height-100px overflow-auto border-bottom padding-4px"
+      class="flex-1 overflow-auto hide-scrollbar border-right padding-4px"
       v-model="group1"
       group="tags"
     >
@@ -14,7 +14,7 @@
       />
     </draggable>
     <draggable
-      class="flex-grow-1 overflow-auto padding-4px"
+      class="flex-1 overflow-auto hide-scrollbar padding-4px"
       v-model="group2"
       group="tags"
     >
@@ -111,8 +111,3 @@ export default defineComponent({
   },
 });
 </script>
-<style scoped>
-.height-100px {
-  height: 100px;
-}
-</style>

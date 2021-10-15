@@ -35,6 +35,7 @@ import { computed, defineComponent, toRefs } from "vue";
 import { FeatureFlag } from "@/popup/model";
 import { reloadTabWithUrl } from "@/chrome/tabs";
 import { collectFeatureFlags } from "@/logic/collect-feature-flags";
+import { closePopup } from "@/chrome/popup";
 
 export default defineComponent({
   emits: ["add"],
@@ -78,10 +79,11 @@ export default defineComponent({
       return url;
     });
 
-    const onSubmit = () => {
+    const onSubmit = async () => {
       const url = newUrl.value;
       if (url !== null) {
-        reloadTabWithUrl(url);
+        await reloadTabWithUrl(url);
+        closePopup();
       }
     };
 

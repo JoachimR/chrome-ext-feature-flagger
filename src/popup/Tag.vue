@@ -1,15 +1,16 @@
 <template>
-  <w-tag class="margin-2px" outline :color="bgcolor">
-    <span class="hover-grab padding-right-8px">{{ name }}</span>
-
-    <w-button
-      :bg-color="bgcolor"
-      :color="color"
-      icon="mdi mdi-close"
-      @click="onClose"
-      sm
-    />
-  </w-tag>
+  <div class="margin-vertical-4px">
+    <w-tag class="hover-grab" outline :color="bgcolor">
+      <span class="padding-right-16px">{{ name }}</span>
+      <w-button
+        :bg-color="bgcolor"
+        :color="color"
+        icon="mdi mdi-close"
+        @click="onClose"
+        sm
+      />
+    </w-tag>
+  </div>
 </template>
 
 <script lang="ts">
@@ -30,7 +31,7 @@ export default defineComponent({
       return props.active ? "primary" : "grey-light2";
     });
     const color = computed<string>(() => {
-      return props.active ? "#fff" : "primary";
+      return props.active ? "white" : "grey-dark4";
     });
 
     const onClose = () => {

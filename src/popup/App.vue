@@ -57,65 +57,41 @@ body {
 .flex-direction-column {
   flex-direction: column;
 }
-.flex-grow {
-  flex-grow: 1;
-}
 .flex-1 {
   flex: 1;
-}
-.justify-flex-end {
-  justify-content: flex-end;
-}
-.justify-center {
-  justify-content: center;
-}
-.justify-space-between {
-  justify-content: space-between;
 }
 .align-items-center {
   align-items: center;
 }
-.align-content-center {
-  align-content: center;
-}
 .overflow-auto {
   overflow: auto;
 }
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
 .border-bottom {
-  border-bottom: 1px solid #1C3967;
+  border-bottom: 1px solid #1c3967;
 }
-.margin-left-4px {
-  margin: 4px;
+.border-right {
+  border-right: 1px solid #1c3967;
 }
-.margin-2px {
-  margin: 2px;
+.margin-vertical-4px {
+  margin-top: 4px;
+  margin-bottom: 4px;
 }
 .margin-4px {
   margin: 4px;
 }
-.padding-right-8px {
-  padding-right: 8px;
-}
-.margin-vertical-2px {
-  margin-top: 2px;
-  margin-bottom: 2px;
+.padding-right-16px {
+  padding-right: 16px;
 }
 .padding-4px {
   padding: 4px;
-}
-.padding-vertical-4px {
-  padding-top: 4px;
-  padding-bottom: 4px;
 }
 .padding-horizontal-4px {
   padding-left: 4px;
   padding-right: 4px;
 }
-.padding-horizontal-8px {
-  padding-left: 8px;
-  padding-right: 8px;
-}
-
 .display-inline {
   display: inline;
 }
