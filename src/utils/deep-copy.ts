@@ -1,3 +1,4 @@
+/* eslint-disable */
 /**
  * http://jsben.ch/qC3Fe
  * */
@@ -22,7 +23,6 @@ export function deepCopy<T extends any>(object: T): T {
   for (iterator in object) {
     // @ts-ignore
     if (object.hasOwnProperty(iterator)) {
-      // eslint-disable-next-line
       newObject[iterator] = deepCopy((object as any)[iterator]);
     }
   }

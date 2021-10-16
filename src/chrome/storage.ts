@@ -1,35 +1,12 @@
 /// <reference types="chrome"/>
 
-import { FeatureFlag } from "@/popup/model";
+import { FeatureFlag, isFeatureFlag } from "@/popup/model";
 import { sortByName } from "@/logic/sort-by-name";
 
-export function loadStoredFeatureFlags(
-  url: string,
-  onLoaded: (result: FeatureFlag[]) => void
-): void {
-  const key = keyForUrl(url);
-  if (key === null) {
-    onLoaded([]);
-    return;
-  }
-  chrome.storage.sync.get([key], (result: { [key: string]: any }) => {
-    const flags = (result[key] ?? []) as FeatureFlag[];
-    flags.sort((a: FeatureFlag, b: FeatureFlag) =>
-      sortByName(a.parameter, b.parameter)
-    );
-    onLoaded(flags);
-  });
-}
-
-export function storeFeatureFlags(
+export type LoadFromStorageFn = (
   hostname: string,
-  featureFlags: FeatureFlag[]
-): Promise<void> {
-  if (!hostname) {
-    return Promise.resolve();
-  }
-  return chrome.storage.sync.set({ [hostname]: featureFlags });
-}
+  callback: (result: { [hostname: string]: unknown }) => void
+) => void;
 
 const keyForUrl = (url: string) => {
   try {
@@ -38,3 +15,46 @@ const keyForUrl = (url: string) => {
     return null;
   }
 };
+
+const retrieveFlags = (key: string, result: { [key: string]: unknown }) => {
+  const values = result[key] ?? [];
+  if (Array.isArray(values)) {
+    return values.filter(isFeatureFlag);
+  }
+  return [];
+};
+
+export function loadStoredFeatureFlags(
+  url: string,
+  onLoaded: (result: FeatureFlag[]) => void,
+  loadFromStorageFn: LoadFromStorageFn = chrome.storage.sync.get
+): void {
+  const key = keyForUrl(url);
+  if (key === null) {
+    onLoaded([]);
+    return;
+  }
+
+  loadFromStorageFn(key, (result: { [key: string]: unknown }) => {
+    const flags = retrieveFlags(key, result);
+    flags.sort((a: FeatureFlag, b: FeatureFlag) =>
+      sortByName(a.parameter, b.parameter)
+    );
+    onLoaded(flags);
+  });
+}
+
+export type StoreToStorageFn = (items: {
+  [hostname: string]: FeatureFlag[];
+}) => Promise<void>;
+
+export function storeFeatureFlags(
+  hostname: string,
+  featureFlags: FeatureFlag[],
+  storeToStorageFn: StoreToStorageFn = chrome.storage.sync.set
+): Promise<void> {
+  if (!hostname) {
+    return Promise.resolve();
+  }
+  return storeToStorageFn({ [hostname]: featureFlags });
+}

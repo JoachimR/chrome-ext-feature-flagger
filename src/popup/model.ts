@@ -1,3 +1,5 @@
+import { hasOwnProperty } from "@/utils/has-own-property";
+
 export type SearchParameter = string;
 export type IsActive = boolean;
 
@@ -5,6 +7,18 @@ export interface FeatureFlag {
   parameter: SearchParameter;
   isActive: IsActive;
 }
+
+export function isFeatureFlag(thing: unknown): thing is FeatureFlag {
+  return (
+    typeof thing === "object" &&
+    thing !== null &&
+    hasOwnProperty(thing, "parameter") &&
+    typeof thing.parameter === "string" &&
+    hasOwnProperty(thing, "isActive") &&
+    typeof thing.isActive === "boolean"
+  );
+}
+
 export interface ActiveFeatureFlag extends FeatureFlag {
   isActive: true;
 }
