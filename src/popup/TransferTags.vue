@@ -106,8 +106,5 @@ export default defineComponent({
       onCloseTag,
     };
   },
-  watch: {
-    items: "onNewItems",
-  },
 });
 </script>

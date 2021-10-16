@@ -29,10 +29,10 @@ import { haveActiveFeatureFlagsChanged } from "@/logic/have-active-feature-flags
 import { storeFeatureFlags } from "@/chrome/storage";
 import { haveFeatureFlagsChanged } from "@/logic/have-feature-flags-changed";
 
-export type InfoProp = {
+export interface PopupPayload {
   url: string;
   storedFeatureFlags: FeatureFlag[];
-};
+}
 
 export default defineComponent({
   components: {
@@ -134,7 +134,7 @@ export default defineComponent({
       );
     });
 
-    function applyNewInfo(info: InfoProp) {
+    function applyNewInfo(info: PopupPayload) {
       const validUrl = extractValidUrl(info.url);
       if (validUrl) {
         onValidUrl(validUrl, info.storedFeatureFlags);
@@ -147,7 +147,7 @@ export default defineComponent({
       () => props.info,
       (info) => {
         if (info) {
-          applyNewInfo(info as InfoProp);
+          applyNewInfo(info as PopupPayload);
         }
       },
       { deep: true }
@@ -167,7 +167,7 @@ export default defineComponent({
 
     onMounted(() => {
       if (props.info) {
-        applyNewInfo(props.info as InfoProp);
+        applyNewInfo(props.info as PopupPayload);
       }
     });
 

@@ -1,11 +1,12 @@
 module.exports = {
-  preset: "@vue/cli-plugin-unit-jest/presets/typescript-and-babel",
-  testMatch: [
-    "**/__tests__/**/*.+(ts|tsx|js)",
-    "**/?(*.)+(spec|test).+(ts|tsx|js)",
-  ],
+  moduleFileExtensions: ["js", "ts", "vue"],
   transform: {
-    "^.+\\.vue$": "vue-jest",
-    "^.+\\.(ts|tsx)$": "ts-jest",
+    "^.+\\.js$": "babel-jest",
+    ".*\\.vue$": "vue-jest",
+    '^.+\\.ts$': 'ts-jest',
+  },
+  moduleNameMapper: {
+    "^@/(.*)$": "<rootDir>/src/$1",
+    "^tests/(.*)$": "<rootDir>/tests/$1",
   },
 };

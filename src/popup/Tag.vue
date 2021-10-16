@@ -3,6 +3,8 @@
     <w-tag class="hover-grab" outline :color="bgcolor">
       <span class="padding-right-16px">{{ name }}</span>
       <w-button
+        data-testid="close"
+        :aria-label="close"
         :bg-color="bgcolor"
         :color="color"
         icon="mdi mdi-close"

@@ -1,6 +1,5 @@
 import { createApp } from "vue";
 import App from "./App.vue";
-import store, { key } from "../store";
 
 // @ts-ignore
 import WaveUI from "wave-ui";
@@ -9,8 +8,6 @@ import "@mdi/font/css/materialdesignicons.min.css";
 
 const app = createApp(App);
 
-new WaveUI(app, {});
-
-app.use(store, key);
+new WaveUI(app);
 
 app.mount("#app");

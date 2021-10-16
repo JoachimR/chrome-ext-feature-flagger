@@ -6,7 +6,7 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, ref } from "vue";
-import Popup, { InfoProp } from "@/popup/Popup.vue";
+import Popup, { PopupPayload } from "@/popup/Popup.vue";
 import {
   initPopup,
   registerListenerForUrlChange,
@@ -20,7 +20,7 @@ export default defineComponent({
   components: { Popup },
   setup() {
     const tabIdRef = ref<TabId>(unknownTabId);
-    const infoRef = ref<InfoProp>({
+    const infoRef = ref<PopupPayload>({
       url: "",
       storedFeatureFlags: [],
     });
