@@ -1,8 +1,9 @@
 {
   "manifest_version": 2,
   "name": "__MSG_extName__",
-  "homepage_url": "http://localhost:8080/",
-  "description": "A Vue Browser Extension",
+  "version": "0.0.0.1",
+  "homepage_url": "https://github.com/JoachimR/chrome-ext-feature-flagger",
+  "description": "Easily manage URL feature flags",
   "default_locale": "en",
   "permissions": [
     "tabs",
