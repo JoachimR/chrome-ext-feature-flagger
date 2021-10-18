@@ -13,7 +13,7 @@ import {
   TabId,
   unknownTabId,
 } from "@/chrome/tabs";
-import { loadStoredFeatureFlags } from "@/chrome/storage";
+import { loadStoredFeatureFlags } from "@/chrome/storage/storage";
 import { FeatureFlag } from "@/popup/model";
 
 export default defineComponent({

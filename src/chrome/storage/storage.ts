@@ -2,11 +2,9 @@
 
 import { FeatureFlag, isFeatureFlag } from "@/popup/model";
 import { sortByName } from "@/logic/sort-by-name";
-
-export type LoadFromStorageFn = (
-  hostname: string,
-  callback: (result: { [hostname: string]: unknown }) => void
-) => void;
+import { loadFromChromeStorage } from "@/chrome/storage/load-from-chrome-storage";
+import { LoadFromStorageFn, StoreToStorageFn } from "@/chrome/storage/model";
+import { storeToChromeStorage } from "@/chrome/storage/store-to-chrome-storage";
 
 const keyForUrl = (url: string) => {
   try {
@@ -24,11 +22,11 @@ const retrieveFlags = (key: string, result: { [key: string]: unknown }) => {
   return [];
 };
 
-export function loadStoredFeatureFlags(
+export const loadStoredFeatureFlags = (
   url: string,
   onLoaded: (result: FeatureFlag[]) => void,
-  loadFromStorageFn: LoadFromStorageFn = chrome.storage.sync.get
-): void {
+  loadFromStorageFn: LoadFromStorageFn = loadFromChromeStorage
+): void => {
   const key = keyForUrl(url);
   if (key === null) {
     onLoaded([]);
@@ -42,19 +40,15 @@ export function loadStoredFeatureFlags(
     );
     onLoaded(flags);
   });
-}
+};
 
-export type StoreToStorageFn = (items: {
-  [hostname: string]: FeatureFlag[];
-}) => Promise<void>;
-
-export function storeFeatureFlags(
+export const storeFeatureFlags = (
   hostname: string,
   featureFlags: FeatureFlag[],
-  storeToStorageFn: StoreToStorageFn = chrome.storage.sync.set
-): Promise<void> {
+  storeToStorageFn: StoreToStorageFn = storeToChromeStorage
+): Promise<void> => {
   if (!hostname) {
     return Promise.resolve();
   }
   return storeToStorageFn({ [hostname]: featureFlags });
-}
+};

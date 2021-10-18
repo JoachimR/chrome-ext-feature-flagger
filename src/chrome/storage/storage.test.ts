@@ -1,10 +1,9 @@
 import {
-  LoadFromStorageFn,
   loadStoredFeatureFlags,
   storeFeatureFlags,
-  StoreToStorageFn,
-} from "@/chrome/storage";
+} from "@/chrome/storage/storage";
 import { FeatureFlag } from "@/popup/model";
+import { LoadFromStorageFn, StoreToStorageFn } from "@/chrome/storage/model";
 
 describe("storage", () => {
   describe("loadStoredFeatureFlags", () => {
