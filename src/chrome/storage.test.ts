@@ -1,19 +1,18 @@
 import {
   loadStoredFeatureFlags,
   storeFeatureFlags,
-} from "@/chrome/storage/storage";
+} from "@/chrome/storage";
 import { FeatureFlag } from "@/popup/model";
-import { LoadFromStorageFn, StoreToStorageFn } from "@/chrome/storage/model";
+import { ChromeAPI } from "@/chrome/chrome-api";
 
 describe("storage", () => {
   describe("loadStoredFeatureFlags", () => {
     let data: { [key: string]: unknown } = {};
-    const loadFromStorageFn: LoadFromStorageFn = (
-      key: string,
-      callback: (result: { [key: string]: unknown }) => void
-    ) => {
-      callback(data);
-    };
+    const chromeAPI: ChromeAPI = {
+      storage: {
+        get: (key, callback) => callback(data),
+      },
+    } as ChromeAPI;
 
     it("returns empty array for unknown hostname", () => {
       const items: unknown[] = [
@@ -28,7 +27,7 @@ describe("storage", () => {
         (result) => {
           expect(result).toEqual([]);
         },
-        loadFromStorageFn
+        chromeAPI
       );
     });
 
@@ -50,7 +49,7 @@ describe("storage", () => {
             { parameter: "c", isActive: false },
           ]);
         },
-        loadFromStorageFn
+        chromeAPI
       );
     });
 
@@ -70,27 +69,31 @@ describe("storage", () => {
         (result) => {
           expect(result).toEqual([{ parameter: "parameter1", isActive: true }]);
         },
-        loadFromStorageFn
+        chromeAPI
       );
     });
   });
 
   describe("storeFeatureFlags", () => {
-    const storeToStorageMock: StoreToStorageFn = jest.fn();
+    const setMock: (items: { [key: string]: unknown }) => Promise<void> =
+      jest.fn();
+    const chromeAPI: ChromeAPI = {
+      storage: {
+        set: setMock,
+      },
+    } as ChromeAPI;
+
     const featureFlags: FeatureFlag[] = [
       { parameter: "parameter1", isActive: true },
       { parameter: "parameter2", isActive: false },
     ];
     it("does not store when hostname is missing", () => {
-      storeFeatureFlags("", featureFlags, storeToStorageMock);
-      expect(storeToStorageMock).not.toHaveBeenCalled();
+      storeFeatureFlags("", featureFlags, chromeAPI);
+      expect(setMock).not.toHaveBeenCalled();
     });
     it("stores when hostname is provided", () => {
-      storeFeatureFlags("some-url.com", featureFlags, storeToStorageMock);
-      expect(storeToStorageMock).not.toHaveBeenCalledWith(
-        "some-url.com",
-        featureFlags
-      );
+      storeFeatureFlags("some-url.com", featureFlags, chromeAPI);
+      expect(setMock).not.toHaveBeenCalledWith("some-url.com", featureFlags);
     });
   });
 });

@@ -1,3 +1,5 @@
-export function closePopup(): void {
-  window.close();
+export function closePopup(
+  windowInstance: { close: () => void } = window
+): void {
+  windowInstance.close();
 }

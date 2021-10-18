@@ -1,28 +1,32 @@
-/// <reference types="chrome"/>
+import { hasOwnProperty } from "@/utils/has-own-property";
+import { ChromeAPI, TabId, unknownTabId } from "@/chrome/chrome-api";
+import { chromeAPIImplementation } from "@/chrome/chrome-api-implementation";
 
-export type TabId = number;
-export const unknownTabId = -1;
-
-export function startListeningForUrlChange(): void {
-  chrome.tabs.onUpdated.addListener(
-    (tabId: number, changeInfo: chrome.tabs.TabChangeInfo) => {
+export function startListeningForUrlChange(
+  chromeAPI: ChromeAPI = chromeAPIImplementation
+): void {
+  chromeAPI.tabs.addUpdatedListener(
+    (tabId: number, changeInfo: { url?: string | undefined }) => {
       if (changeInfo.url) {
-        chrome.runtime.sendMessage(createMessage(tabId, changeInfo.url));
+        chromeAPI.message.send(createMessage(tabId, changeInfo.url));
       }
     }
   );
 }
 
-export async function reloadTabWithUrl(url: URL): Promise<void> {
-  await chrome.tabs.update({ url: url.toString() });
+export async function reloadTabWithUrl(
+  url: URL,
+  chromeAPI: ChromeAPI = chromeAPIImplementation
+): Promise<void> {
+  await chromeAPI.tabs.update({ url: url.toString() });
 }
 
 export function initPopup(
-  callback: (tabId: number, url: string) => void
+  callback: (tabId: number, url: string) => void,
+  chromeAPI: ChromeAPI = chromeAPIImplementation
 ): void {
-  chrome.tabs.query(
-    { active: true, currentWindow: true },
-    (tabs: chrome.tabs.Tab[]) => {
+  chromeAPI.tabs.query(
+    (tabs: { id?: TabId | undefined; url?: string | undefined }[]) => {
       if (tabs.length > 0) {
         const tab = tabs[0];
         const tabId = tab.id ?? unknownTabId;
@@ -36,9 +40,10 @@ export function initPopup(
 }
 
 export function registerListenerForUrlChange(
-  callback: (tabId: number, url: string) => void
+  callback: (tabId: number, url: string) => void,
+  chromeAPI: ChromeAPI = chromeAPIImplementation
 ): void {
-  chrome.runtime.onMessage.addListener((message) => {
+  chromeAPI.message.addListener((message) => {
     if (isMessageUrlChanged(message)) {
       callback(message.tabId, message.url);
     }
@@ -57,10 +62,8 @@ function isMessageUrlChanged(message: unknown): message is MessageUrlChanged {
   return (
     typeof message === "object" &&
     message !== null &&
-    "type" in message &&
-    // @ts-ignore
+    hasOwnProperty(message, "type") &&
     typeof message.type === "string" &&
-    // @ts-ignore
     message.type === messageUrlChangedType
   );
 }
