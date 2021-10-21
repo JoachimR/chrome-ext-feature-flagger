@@ -1,3 +1,3 @@
-import { startListeningForUrlChange } from "./chrome/tabs";
+import { startListeningForUrlChange } from "./browser-extension/tabs";
 
 startListeningForUrlChange();

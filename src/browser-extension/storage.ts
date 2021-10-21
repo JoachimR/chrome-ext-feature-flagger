@@ -2,8 +2,8 @@
 
 import { FeatureFlag, isFeatureFlag } from "@/popup/model";
 import { sortByName } from "@/logic/sort-by-name";
-import { ChromeAPI } from "@/chrome/chrome-api";
-import { chromeAPIImplementation } from "@/chrome/chrome-api-implementation";
+import { ChromeAPI } from "@/browser-extension/chrome/chrome-api";
+import { chromeAPIImplementation } from "@/browser-extension/chrome/chrome-api-implementation";
 
 const keyForUrl = (url: string) => {
   try {

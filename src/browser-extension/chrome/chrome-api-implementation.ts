@@ -1,6 +1,6 @@
 /// <reference types="chrome"/>
 
-import { ChromeAPI } from "@/chrome/chrome-api";
+import { ChromeAPI } from "@/browser-extension/chrome/chrome-api";
 
 export const chromeAPIImplementation: ChromeAPI = {
   tabs: {

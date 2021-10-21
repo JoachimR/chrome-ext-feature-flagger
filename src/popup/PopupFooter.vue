@@ -34,9 +34,9 @@
 <script lang="ts">
 import { computed, defineComponent, toRefs } from "vue";
 import { FeatureFlag } from "@/popup/model";
-import { reloadTabWithUrl } from "@/chrome/tabs";
+import { reloadTabWithUrl } from "@/browser-extension/tabs";
 import { collectFeatureFlags } from "@/logic/collect-feature-flags";
-import { closePopup } from "@/chrome/popup";
+import { closePopup } from "@/browser-extension/popup";
 
 export default defineComponent({
   emits: ["add"],

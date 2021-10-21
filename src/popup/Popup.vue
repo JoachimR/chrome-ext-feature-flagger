@@ -26,7 +26,7 @@ import PopupMain from "@/popup/PopupMain.vue";
 import PopupFooter from "@/popup/PopupFooter.vue";
 import { deepCopy } from "@/utils/deep-copy";
 import { haveActiveFeatureFlagsChanged } from "@/logic/have-active-feature-flags-changed";
-import { storeFeatureFlags } from "@/chrome/storage";
+import { storeFeatureFlags } from "@/browser-extension/storage";
 import { haveFeatureFlagsChanged } from "@/logic/have-feature-flags-changed";
 
 export interface PopupPayload {
