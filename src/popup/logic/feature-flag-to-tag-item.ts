@@ -1,4 +1,4 @@
-import { FeatureFlag, TagItem, TagItemGroup } from "@/popup/model";
+import { FeatureFlag, TagItem, TagItemGroup } from "@/popup/model/model";
 
 export const featureFlagToTagItem = (featureFlag: FeatureFlag): TagItem => ({
   id: "id_" + featureFlag.parameter,

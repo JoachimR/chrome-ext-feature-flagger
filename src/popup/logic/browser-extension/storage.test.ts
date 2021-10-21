@@ -1,9 +1,9 @@
 import {
   loadStoredFeatureFlags,
   storeFeatureFlags,
-} from "@/browser-extension/storage";
-import { FeatureFlag } from "@/popup/model";
-import { ChromeAPI } from "@/browser-extension/chrome/chrome-api";
+} from "@/popup/logic/browser-extension/storage";
+import { FeatureFlag } from "@/popup/model/model";
+import { ChromeAPI } from "@/popup/logic/browser-extension/chrome/chrome-api";
 
 describe("storage", () => {
   describe("loadStoredFeatureFlags", () => {

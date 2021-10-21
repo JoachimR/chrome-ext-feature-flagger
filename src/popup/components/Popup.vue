@@ -20,14 +20,14 @@
 
 <script lang="ts">
 import { computed, defineComponent, onMounted, ref, watch } from "vue";
-import { FeatureFlag, UrlHostname } from "@/popup/model";
-import { collectFeatureFlags } from "@/logic/collect-feature-flags";
-import PopupMain from "@/popup/PopupMain.vue";
-import PopupFooter from "@/popup/PopupFooter.vue";
-import { deepCopy } from "@/utils/deep-copy";
-import { haveActiveFeatureFlagsChanged } from "@/logic/have-active-feature-flags-changed";
-import { storeFeatureFlags } from "@/browser-extension/storage";
-import { haveFeatureFlagsChanged } from "@/logic/have-feature-flags-changed";
+import { FeatureFlag, UrlHostname } from "@/popup/model/model";
+import { collectFeatureFlags } from "@/popup/logic/collect-feature-flags";
+import PopupMain from "@/popup/components/PopupMain.vue";
+import PopupFooter from "@/popup/components/PopupFooter.vue";
+import { deepCopy } from "@/popup/logic/utils/deep-copy";
+import { haveActiveFeatureFlagsChanged } from "@/popup/logic/have-active-feature-flags-changed";
+import { storeFeatureFlags } from "@/popup/logic/browser-extension/storage";
+import { haveFeatureFlagsChanged } from "@/popup/logic/have-feature-flags-changed";
 
 export interface PopupPayload {
   url: string;

@@ -1,6 +1,6 @@
 import "@testing-library/jest-dom";
 import { fireEvent, render, screen } from "@testing-library/vue";
-import Tag from "@/popup/Tag.vue";
+import Tag from "@/popup/components/Tag.vue";
 
 describe("Tag", () => {
   it("shows the tag", async () => {

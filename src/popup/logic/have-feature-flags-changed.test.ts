@@ -1,8 +1,19 @@
-import { haveActiveFeatureFlagsChanged } from "@/logic/have-active-feature-flags-changed";
-import { FeatureFlag } from "@/popup/model";
+import { FeatureFlag } from "@/popup/model/model";
+import { haveFeatureFlagsChanged } from "@/popup/logic/have-feature-flags-changed";
 
 describe("haveFeatureFlagsChanged", () => {
   it.each([
+    [[], [], false],
+    [
+      [{ parameter: "abc", isActive: true }],
+      [{ parameter: "abc", isActive: true }],
+      false,
+    ],
+    [
+      [{ parameter: "abc", isActive: true }],
+      [{ parameter: "abc", isActive: false }],
+      true,
+    ],
     [
       [
         { parameter: "abc", isActive: true },
@@ -28,13 +39,13 @@ describe("haveFeatureFlagsChanged", () => {
         { parameter: "def", isActive: false },
         { parameter: "abc", isActive: true },
       ],
-      false,
+      true,
     ],
-    [[{ parameter: "abc", isActive: false }], [], false],
+    [[{ parameter: "abc", isActive: false }], [], true],
     [
       [{ parameter: "abc", isActive: false }],
       [{ parameter: "def", isActive: false }],
-      false,
+      true,
     ],
   ])(
     "%j ==> %j ==> %s",
@@ -43,9 +54,9 @@ describe("haveFeatureFlagsChanged", () => {
       newFeatureFlags: FeatureFlag[],
       expectHasChanged: boolean
     ) => {
-      expect(
-        haveActiveFeatureFlagsChanged(oldFeatureFlags, newFeatureFlags)
-      ).toBe(expectHasChanged);
+      expect(haveFeatureFlagsChanged(oldFeatureFlags, newFeatureFlags)).toBe(
+        expectHasChanged
+      );
     }
   );
 });

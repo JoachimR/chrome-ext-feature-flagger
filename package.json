@@ -6,7 +6,7 @@
     "serve": "vue-cli-service build --mode development --watch",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "test:unit": "vue-cli-service test:unit"
+    "unit": "vue-cli-service test:unit"
   },
   "dependencies": {
     "@mdi/font": "^6.2.95",

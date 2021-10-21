@@ -1,6 +1,6 @@
 import "jest";
-import { collectFeatureFlags } from "@/logic/collect-feature-flags";
-import { FeatureFlag } from "@/popup/model";
+import { collectFeatureFlags } from "@/popup/logic/collect-feature-flags";
+import { FeatureFlag } from "@/popup/model/model";
 
 describe("collect-feature-flags", () => {
   const scenarios: [string, FeatureFlag[]][] = [

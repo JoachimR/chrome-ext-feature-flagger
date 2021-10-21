@@ -32,9 +32,9 @@
 <script lang="ts">
 import { computed, defineComponent, onMounted, ref, toRefs, watch } from "vue";
 import { VueDraggableNext } from "vue-draggable-next";
-import Tag from "@/popup/Tag.vue";
-import { TagItem, TagItemGroup } from "@/popup/model";
-import { sortByName } from "@/logic/sort-by-name";
+import Tag from "@/popup/components/Tag.vue";
+import { TagItem, TagItemGroup } from "@/popup/model/model";
+import { sortByName } from "@/popup/logic/utils/sort-by-name";
 
 export default defineComponent({
   components: {

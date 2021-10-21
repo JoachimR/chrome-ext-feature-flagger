@@ -1,4 +1,4 @@
-import { FeatureFlag } from "@/popup/model";
+import { FeatureFlag } from "@/popup/model/model";
 
 export function haveFeatureFlagsChanged(
   oldFlags: FeatureFlag[],

@@ -6,11 +6,11 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, ref } from "vue";
-import Popup, { PopupPayload } from "@/popup/Popup.vue";
-import { initPopup, registerListenerForUrlChange } from "@/browser-extension/tabs";
-import { loadStoredFeatureFlags } from "@/browser-extension/storage";
-import { FeatureFlag } from "@/popup/model";
-import { TabId, unknownTabId } from "@/browser-extension/chrome/chrome-api";
+import Popup, { PopupPayload } from "@/popup/components/Popup.vue";
+import { initPopup, registerListenerForUrlChange } from "@/popup/logic/browser-extension/tabs";
+import { loadStoredFeatureFlags } from "@/popup/logic/browser-extension/storage";
+import { FeatureFlag } from "@/popup/model/model";
+import { TabId, unknownTabId } from "@/popup/logic/browser-extension/chrome/chrome-api";
 
 export default defineComponent({
   components: { Popup },

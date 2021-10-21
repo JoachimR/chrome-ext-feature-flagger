@@ -1,3 +1,3 @@
-import { startListeningForUrlChange } from "./browser-extension/tabs";
+import { startListeningForUrlChange } from "./popup/logic/browser-extension/tabs";
 
 startListeningForUrlChange();

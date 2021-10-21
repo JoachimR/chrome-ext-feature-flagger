@@ -1,9 +1,9 @@
 /// <reference types="chrome"/>
 
-import { FeatureFlag, isFeatureFlag } from "@/popup/model";
-import { sortByName } from "@/logic/sort-by-name";
-import { ChromeAPI } from "@/browser-extension/chrome/chrome-api";
-import { chromeAPIImplementation } from "@/browser-extension/chrome/chrome-api-implementation";
+import { FeatureFlag, isFeatureFlag } from "@/popup/model/model";
+import { sortByName } from "@/popup/logic/utils/sort-by-name";
+import { ChromeAPI } from "@/popup/logic/browser-extension/chrome/chrome-api";
+import { chromeAPIImplementation } from "@/popup/logic/browser-extension/chrome/chrome-api-implementation";
 
 const keyForUrl = (url: string) => {
   try {

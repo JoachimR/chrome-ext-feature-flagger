@@ -1,4 +1,4 @@
-import { hasOwnProperty } from "@/utils/has-own-property";
+import { hasOwnProperty } from "@/popup/logic/utils/has-own-property";
 
 export type SearchParameter = string;
 export type IsActive = boolean;
@@ -45,3 +45,8 @@ export interface TagItem {
   name: string;
   group: TagItemGroup;
 }
+
+export const tagItemToFeatureFlag = (tagItem: TagItem): FeatureFlag => ({
+  parameter: tagItem.name,
+  isActive: tagItem.group === TagItemGroup.Active
+});
