@@ -9,11 +9,10 @@
     "unit": "vue-cli-service test:unit"
   },
   "dependencies": {
-    "@mdi/font": "^6.2.95",
     "core-js": "^3.6.5",
+    "equal-vue": "^0.79.3",
     "vue": "^3.0.0",
-    "vue-draggable-next": "^2.0.1",
-    "wave-ui": "^2.25.0"
+    "vue-draggable-next": "^2.0.1"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.14.1",

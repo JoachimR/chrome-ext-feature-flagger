@@ -1,13 +1,16 @@
 import { createApp } from "vue";
 import App from "./App.vue";
 
-// @ts-ignore
-import WaveUI from "wave-ui";
-import "wave-ui/dist/wave-ui.css";
-import "@mdi/font/css/materialdesignicons.min.css";
-
 const app = createApp(App);
 
-new WaveUI(app);
+// import { Tag, Input, Button } from "equal-vue";
+// import "equal-vue/dist/style.css";
+//
+// app.use(Tag).use(Input).use(Button);
+
+import Equal from "equal-vue";
+import "equal-vue/dist/style.css";
+
+app.use(Equal);
 
 app.mount("#app");

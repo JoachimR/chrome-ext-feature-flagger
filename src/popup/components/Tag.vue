@@ -1,17 +1,8 @@
 <template>
   <div class="margin-vertical-4px">
-    <w-tag class="hover-grab" outline :color="bgcolor">
-      <span class="padding-right-16px">{{ name }}</span>
-      <w-button
-        data-testid="close"
-        :aria-label="close"
-        :bg-color="bgcolor"
-        :color="color"
-        icon="mdi mdi-close"
-        @click="onClose"
-        sm
-      />
-    </w-tag>
+    <it-tag class="hover-grab" :type="type" closable filled @close="onClose">
+      {{ name }}
+    </it-tag>
   </div>
 </template>
 
@@ -29,18 +20,15 @@ export default defineComponent({
     },
   },
   setup(props, context) {
-    const bgcolor = computed<string>(() => {
-      return props.active ? "primary" : "grey-light2";
-    });
-    const color = computed<string>(() => {
-      return props.active ? "white" : "grey-dark4";
+    const type = computed<string>(() => {
+      return props.active ? "primary" : "";
     });
 
     const onClose = () => {
       context.emit("close", props.name);
     };
 
-    return { bgcolor, color, onClose };
+    return { type, onClose };
   },
 });
 </script>

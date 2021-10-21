@@ -1,31 +1,26 @@
 <template>
   <div>
     <div class="display-flex padding-horizontal-4px align-items-center">
-      <w-input
-        maxlength="99"
-        v-model="newFeatureFlagParameter"
-        @keyup.enter="onAddNewFeatureFlagParameter"
-      >
-        Add new feature flag
-      </w-input>
+      <div class="flex-1">
+        <it-input
+          placeholder="Add new feature flag"
+          v-model="newFeatureFlagParameter"
+          @keyup.enter="onAddNewFeatureFlagParameter"
+          class="flex-1"
+        />
+      </div>
       <div class="margin-4px">
-        <w-button
-          bg-color="primary"
-          icon="mdi mdi-plus"
+        <it-button
+          icon="add"
           :disabled="!newFeatureFlagParameter"
           @click="onAddNewFeatureFlagParameter"
         />
       </div>
     </div>
     <div class="display-flex padding-horizontal-4px align-items-center">
-      <w-input :model-value="newUrl" readonly />
+      <div class="flex-1"><it-input :model-value="newUrl" readonly /></div>
       <div class="margin-4px">
-        <w-button
-          bg-color="success"
-          icon="mdi mdi-refresh"
-          :disabled="!showSubmit"
-          @click="onSubmit"
-        />
+        <it-button icon="refresh" :disabled="!showSubmit" @click="onSubmit" />
       </div>
     </div>
   </div>
@@ -99,7 +94,8 @@ export default defineComponent({
   methods: {
     onAddNewFeatureFlagParameter() {
       if (this.newFeatureFlagParameter) {
-        this.$emit("add", this.newFeatureFlagParameter);
+        const value = this.newFeatureFlagParameter.substring(0, 99);
+        this.$emit("add", value);
         this.newFeatureFlagParameter = "";
       }
     },
