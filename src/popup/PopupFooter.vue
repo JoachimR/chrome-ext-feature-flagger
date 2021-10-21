@@ -2,6 +2,7 @@
   <div>
     <div class="display-flex padding-horizontal-4px align-items-center">
       <w-input
+        maxlength="99"
         v-model="newFeatureFlagParameter"
         @keyup.enter="onAddNewFeatureFlagParameter"
       >
