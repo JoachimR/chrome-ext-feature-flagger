@@ -30,8 +30,8 @@
 import { computed, defineComponent, toRefs } from "vue";
 import { FeatureFlag } from "@/popup/model/model";
 import { reloadTabWithUrl } from "@/popup/logic/browser-extension/tabs";
-import { collectFeatureFlags } from "@/popup/logic/collect-feature-flags";
 import { closePopup } from "@/popup/logic/browser-extension/popup";
+import { createNewUrl } from "@/popup/logic/create-new-url";
 
 export default defineComponent({
   emits: ["add"],
@@ -51,28 +51,14 @@ export default defineComponent({
     const featureFlagsRef = toRefs(props).featureFlags;
 
     const newUrl = computed<URL | null>(() => {
-      const currentUrl = urlRef.value;
-      if (!currentUrl) {
+      const currentUrlString = urlRef.value;
+      if (!currentUrlString) {
         return null;
       }
-      const url: URL = new URL(currentUrl);
-      const featureFlags = featureFlagsRef.value as FeatureFlag[];
-
-      const collectedFlags = collectFeatureFlags(url.searchParams);
-      for (const collectedFlag of collectedFlags) {
-        let flag = featureFlags.find(
-          (flag) => flag.parameter === collectedFlag.parameter
-        );
-        if (!flag || !flag.isActive) {
-          url.searchParams.delete(collectedFlag.parameter);
-        }
-      }
-
-      for (const featureFlag of featureFlags.filter((flag) => flag.isActive)) {
-        url.searchParams.set(featureFlag.parameter, "1");
-      }
-      url.searchParams.sort();
-      return url;
+      return createNewUrl(
+        currentUrlString,
+        featureFlagsRef.value as FeatureFlag[]
+      );
     });
 
     const onSubmit = async () => {

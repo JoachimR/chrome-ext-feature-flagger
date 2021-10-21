@@ -8,7 +8,11 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, ref, watch } from "vue";
-import { FeatureFlag, TagItem, tagItemToFeatureFlag } from "@/popup/model/model";
+import {
+  FeatureFlag,
+  TagItem,
+  tagItemToFeatureFlag,
+} from "@/popup/model/model";
 import { featureFlagToTagItem } from "@/popup/logic/feature-flag-to-tag-item";
 import TransferTags from "@/popup/components/TransferTags.vue";
 

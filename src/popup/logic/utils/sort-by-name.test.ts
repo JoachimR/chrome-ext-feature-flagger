@@ -1,5 +1,3 @@
-import { haveActiveFeatureFlagsChanged } from "@/popup/logic/have-active-feature-flags-changed";
-import { FeatureFlag, TagItem } from "@/popup/model/model";
 import { sortByName } from "@/popup/logic/utils/sort-by-name";
 
 describe("sortByName", () => {

@@ -1,5 +1,9 @@
 import { hasOwnProperty } from "@/popup/logic/utils/has-own-property";
-import { ChromeAPI, TabId, unknownTabId } from "@/popup/logic/browser-extension/chrome/chrome-api";
+import {
+  ChromeAPI,
+  TabId,
+  unknownTabId,
+} from "@/popup/logic/browser-extension/chrome/chrome-api";
 import { chromeAPIImplementation } from "@/popup/logic/browser-extension/chrome/chrome-api-implementation";
 
 export function startListeningForUrlChange(

@@ -48,5 +48,5 @@ export interface TagItem {
 
 export const tagItemToFeatureFlag = (tagItem: TagItem): FeatureFlag => ({
   parameter: tagItem.name,
-  isActive: tagItem.group === TagItemGroup.Active
+  isActive: tagItem.group === TagItemGroup.Active,
 });

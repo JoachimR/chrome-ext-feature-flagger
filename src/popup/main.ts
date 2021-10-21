@@ -1,5 +1,7 @@
 import { createApp } from "vue";
 import App from "./App.vue";
+import Equal from "equal-vue";
+import "equal-vue/dist/style.css";
 
 const app = createApp(App);
 
@@ -7,9 +9,6 @@ const app = createApp(App);
 // import "equal-vue/dist/style.css";
 //
 // app.use(Tag).use(Input).use(Button);
-
-import Equal from "equal-vue";
-import "equal-vue/dist/style.css";
 
 app.use(Equal);
 
