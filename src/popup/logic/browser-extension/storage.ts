@@ -1,5 +1,3 @@
-/// <reference types="chrome"/>
-
 import { FeatureFlag, isFeatureFlag } from "@/popup/model/model";
 import { sortByName } from "@/popup/logic/utils/sort-by-name";
 import { ChromeAPI } from "@/popup/logic/browser-extension/chrome/chrome-api";
