@@ -8,3 +8,7 @@ An extension that helps you manage url parameters that indicate feature flags on
 
 For now it will only parse url parameters that have a value of `0` or `1`
 
+
+
+Chrome extension store link:
+https://chrome.google.com/webstore/detail/feature-flagger/aphjapajjchhleceahjfcgcppnmmjjjl
