@@ -18,7 +18,7 @@
       </div>
     </div>
     <div class="display-flex padding-horizontal-4px align-items-center">
-      <div class="flex-1"><it-input :model-value="newUrl" readonly /></div>
+      <div class="flex-1"><it-input :value="newDisplayedUrl" readonly /></div>
       <div class="margin-4px">
         <it-button icon="refresh" :disabled="!showSubmit" @click="onSubmit" />
       </div>
@@ -69,8 +69,13 @@ export default defineComponent({
       }
     };
 
+    const newDisplayedUrl = computed<string>(() => {
+      return newUrl.value?.toString() || "";
+    });
+
     return {
       newUrl,
+      newDisplayedUrl,
       onSubmit,
     };
   },
