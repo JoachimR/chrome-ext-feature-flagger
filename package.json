@@ -1,41 +1,32 @@
 {
-  "name": "feature-flagger",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "serve": "vue-cli-service build --mode development --watch",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint",
-    "unit": "vue-cli-service test:unit"
-  },
-  "dependencies": {
-    "core-js": "^3.6.5",
-    "equal-vue": "^0.79.3",
-    "vue": "^3.0.0",
-    "vue-draggable-next": "^2.0.1"
-  },
-  "devDependencies": {
-    "@testing-library/jest-dom": "^5.14.1",
-    "@testing-library/vue": "^6.4.2",
-    "@types/chrome": "^0.0.157",
-    "@types/jest": "^24.0.19",
-    "@typescript-eslint/eslint-plugin": "^4.18.0",
-    "@typescript-eslint/parser": "^4.18.0",
-    "@vue/cli-plugin-babel": "~4.5.0",
-    "@vue/cli-plugin-eslint": "~4.5.0",
-    "@vue/cli-plugin-typescript": "~4.5.0",
-    "@vue/cli-plugin-unit-jest": "~4.5.0",
-    "@vue/cli-service": "~4.5.0",
-    "@vue/compiler-sfc": "^3.0.0",
-    "@vue/eslint-config-prettier": "^6.0.0",
-    "@vue/eslint-config-typescript": "^7.0.0",
-    "@vue/test-utils": "^2.0.0-0",
-    "eslint": "^6.7.2",
-    "eslint-plugin-prettier": "^3.3.1",
-    "eslint-plugin-vue": "^7.0.0",
-    "prettier": "^2.2.1",
-    "typescript": "~4.1.5",
-    "vue-cli-plugin-browser-extension": "latest",
-    "vue-jest": "^5.0.0-0"
-  }
+	"name": "feature-flagger",
+	"private": true,
+	"version": "0.0.0",
+	"type": "module",
+	"scripts": {
+		"dev": "vite",
+		"build": "vue-tsc -b && vite build",
+		"preview": "vite preview",
+		"typecheck": "vue-tsc -b --watch",
+		"unit": "vitest",
+		"lint": "biome check --write ./src"
+	},
+	"dependencies": {
+		"equal-vue": "^0.79.3",
+		"pinia": "^2.2.0",
+		"vite-plugin-biome": "^1.0.12",
+		"vue": "^3.4.34",
+		"vue-draggable-next": "^2.2.1"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "1.8.3",
+		"@crxjs/vite-plugin": "2.0.0-beta.25",
+		"@types/chrome": "^0.0.157",
+		"@types/node": "^22.0.0",
+		"@vitejs/plugin-vue": "^5.0.5",
+		"typescript": "^5.2.2",
+		"vite": "^5.3.4",
+		"vitest": "^2.0.4",
+		"vue-tsc": "^2.0.24"
+	}
 }
