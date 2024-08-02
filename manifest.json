@@ -1,0 +1,26 @@
+{
+	"manifest_version": 3,
+	"name": "feature flagger",
+	"version": "0.0.0.2",
+	"homepage_url": "https://github.com/JoachimR/chrome-ext-feature-flagger",
+	"description": "Easily manage URL feature flags",
+	"permissions": ["tabs", "storage"],
+	"icons": {
+		"24": "icons/icon24.png",
+		"36": "icons/icon36.png",
+		"48": "icons/icon48.png"
+	},
+	"background": {
+		"service_worker": "service-worker.js",
+		"type": "module"
+	},
+	"action": {
+		"default_popup": "src/index.html",
+		"default_title": "feature flagger",
+		"default_icon": {
+			"24": "icons/icon24.png",
+			"36": "icons/icon36.png",
+			"48": "icons/icon48.png"
+		}
+	}
+}
