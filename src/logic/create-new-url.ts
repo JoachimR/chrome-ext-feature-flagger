@@ -1,25 +1,37 @@
-import type { FeatureFlag } from '../model/model.ts'
 import { collectFeatureFlags } from './collect-feature-flags.ts'
 
-export function createNewUrl(
-	currentUrlString: string,
-	flags: FeatureFlag[],
-): URL | null {
-	const activeFlags = new Set(
-		flags.filter((flag) => flag.isActive).map((flag) => flag.parameter),
-	)
+export function createNewUrl({
+	currentUrlString,
+	flagsOn,
+	flagsOff,
+}: {
+	currentUrlString: string
+	flagsOn: string[]
+	flagsOff: string[]
+}): URL | null {
+	const inactiveFlags = new Set(flagsOff)
+	const activeFlags = new Set(flagsOn)
+
 	const url = createUrl(currentUrlString)
 	if (url === null) {
 		return null
 	}
+
+	// delete all flags that are not off or on anymore
 	for (const current of collectFeatureFlags(url.searchParams)) {
-		const has = activeFlags.has(current.parameter)
-		if (!has) {
+		if (
+			!activeFlags.has(current.parameter) &&
+			!inactiveFlags.has(current.parameter)
+		) {
 			url.searchParams.delete(current.parameter)
 		}
 	}
-	for (const activeFlag of activeFlags) {
-		url.searchParams.set(activeFlag, '1')
+
+	for (const f of inactiveFlags) {
+		url.searchParams.set(f, '0')
+	}
+	for (const f of activeFlags) {
+		url.searchParams.set(f, '1')
 	}
 	url.searchParams.sort()
 	return url

@@ -1,15 +1,13 @@
-import { type FeatureFlag, isActiveFeatureFlag } from '../model/model.ts'
+import type { FeatureFlag } from '../model/model.ts'
 
-export function haveActiveFeatureFlagsChanged(
-	oldFeatureFlags: FeatureFlag[],
-	newFeatureFlags: FeatureFlag[],
-): boolean {
-	const oldActiveFeatureFlags = oldFeatureFlags.filter(isActiveFeatureFlag)
-	const newActiveFeatureFlags = newFeatureFlags.filter(isActiveFeatureFlag)
+export function haveActiveFeatureFlagsChanged({
+	oldFFs,
+	newFFs,
+}: { oldFFs: FeatureFlag[]; newFFs: FeatureFlag[] }): boolean {
 	return (
-		oldActiveFeatureFlags.length !== newActiveFeatureFlags.length ||
-		!oldActiveFeatureFlags.every((oldFlag) =>
-			newActiveFeatureFlags.some(
+		oldFFs.length !== newFFs.length ||
+		!oldFFs.every((oldFlag) =>
+			newFFs.some(
 				(newFlag) =>
 					oldFlag.parameter === newFlag.parameter &&
 					oldFlag.isActive === newFlag.isActive,

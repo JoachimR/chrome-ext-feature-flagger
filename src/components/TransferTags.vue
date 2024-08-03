@@ -1,14 +1,21 @@
 <template>
   <div class="display-flex border-bottom">
     <VueDraggableNext
+      v-model="store.ffShelf"
+      class="flex-1 overflow-auto hide-scrollbar border-right padding-4px"
+      group="tags"
+    >
+      <Tag v-for="element in store.ffShelf" :key="element" :name="element" :active="false" @close="onDeleteTag" />
+    </VueDraggableNext>
+    <VueDraggableNext
       v-model="store.ffOff"
       class="flex-1 overflow-auto hide-scrollbar border-right padding-4px"
       group="tags"
     >
-      <Tag v-for="element in store.ffOff" :key="element" :name="element" :active="false" @close="onCloseTag" />
+      <Tag v-for="element in store.ffOff" :key="element" :name="element" :active="false" @close="onDeleteTag" />
     </VueDraggableNext>
     <VueDraggableNext v-model="store.ffOn" class="flex-1 overflow-auto hide-scrollbar padding-4px" group="tags">
-      <Tag v-for="element in store.ffOn" :key="element" :name="element" :active="true" @close="onCloseTag" />
+      <Tag v-for="element in store.ffOn" :key="element" :name="element" :active="true" @close="onDeleteTag" />
     </VueDraggableNext>
   </div>
 </template>
@@ -20,7 +27,7 @@ import Tag from './Tag.vue'
 
 const store = useStore()
 
-const onCloseTag = (name: string) => {
-	store.removeFeatureFlag(name)
+const onDeleteTag = (name: string) => {
+	store.deleteFeatureFlag(name)
 }
 </script>

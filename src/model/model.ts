@@ -23,7 +23,3 @@ export function isFeatureFlag(thing: unknown): thing is FeatureFlag {
 		typeof thing.isActive === 'boolean'
 	)
 }
-
-export const isActiveFeatureFlag = (
-	featureFlag: FeatureFlag,
-): featureFlag is FeatureFlag & { isActive: true } => featureFlag.isActive

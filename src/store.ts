@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { computed, ref, watch } from 'vue'
 import { storeFeatureFlags } from './logic/browser-extension/storage.ts'
 import { collectFeatureFlags } from './logic/collect-feature-flags.ts'
-import { createNewUrlWithActiveFlags } from './logic/create-new-url-with-active-flags.ts'
+import { createNewUrl } from './logic/create-new-url.ts'
 import { haveActiveFeatureFlagsChanged } from './logic/have-active-feature-flags-changed.ts'
 import {
 	type FeatureFlag,
@@ -13,7 +13,10 @@ import {
 type UrlInfo = {
 	url: string
 	hostname: string
-	featureFlags: string[]
+	flags: {
+		off: string[]
+		on: string[]
+	}
 }
 
 const removeFromList = (list: string[], value: string) => {
@@ -34,27 +37,43 @@ export const useStore = defineStore('store', () => {
 	const urlInfo = ref<UrlInfo>({
 		url: '',
 		hostname: '',
-		featureFlags: [],
+		flags: {
+			off: [],
+			on: [],
+		},
 	})
 
+	const ffShelf = ref<string[]>([])
 	const ffOff = ref<string[]>([])
 	const ffOn = ref<string[]>([])
 
-	const updateLocalStorage = (flags: FeatureFlag[]) => {
+	const updateLocalStorage = ({
+		off,
+		on,
+	}: {
+		off: Set<string>
+		on: Set<string>
+	}) => {
 		if (initialized.value && urlInfo.value.hostname) {
+			const flags = [
+				...Array.from(off).map(createInactiveFeatureFlag),
+				...Array.from(on).map(createActiveFeatureFlag),
+			]
 			storeFeatureFlags(urlInfo.value.hostname, flags)
 		}
 	}
 
-	const featureFlags = computed<FeatureFlag[]>(() => [
-		...ffOff.value.map(createInactiveFeatureFlag),
-		...ffOn.value.map(createActiveFeatureFlag),
-	])
+	const featureFlagsToStore = computed<{ off: Set<string>; on: Set<string> }>(
+		() => ({
+			off: new Set([...ffShelf.value, ...ffOff.value]),
+			on: new Set(ffOn.value),
+		}),
+	)
 
 	watch(
-		() => featureFlags,
+		() => featureFlagsToStore,
 		() => {
-			updateLocalStorage(featureFlags.value)
+			updateLocalStorage(featureFlagsToStore.value)
 		},
 		{ deep: true },
 	)
@@ -65,53 +84,78 @@ export const useStore = defineStore('store', () => {
 					type: 'valid'
 					value: {
 						urlInfo: UrlInfo
-						flags: { off: Set<string>; on: Set<string> }
+						flags: {
+							shelf: Set<string>
+							off: Set<string>
+							on: Set<string>
+						}
 					}
 			  }
 			| { type: 'invalid' },
 	) {
 		if (payload.type === 'invalid') {
-			urlInfo.value = { url: '', hostname: '', featureFlags: [] }
+			urlInfo.value = {
+				url: '',
+				hostname: '',
+				flags: {
+					off: [],
+					on: [],
+				},
+			}
+			ffShelf.value = []
 			ffOff.value = []
 			ffOn.value = []
 			initialized.value = false
 		} else {
 			urlInfo.value = payload.value.urlInfo
+			ffShelf.value = Array.from(payload.value.flags.shelf)
 			ffOff.value = Array.from(payload.value.flags.off)
 			ffOn.value = Array.from(payload.value.flags.on)
 			initialized.value = true
 		}
 	}
 
-	function removeFeatureFlag(name: string) {
+	function deleteFeatureFlag(name: string) {
+		removeFromList(ffShelf.value, name)
 		removeFromList(ffOff.value, name)
 		removeFromList(ffOn.value, name)
 	}
 	function addFeatureFlag(name: string) {
+		removeFromList(ffShelf.value, name)
 		removeFromList(ffOff.value, name)
 		addToList(ffOn.value, name)
 	}
 
 	const isInitialized = computed(() => initialized.value)
-	const hasChanges = computed(() => {
-		const original = urlInfo.value.featureFlags.map(createActiveFeatureFlag)
-		const current = ffOn.value.map(createActiveFeatureFlag)
-		return haveActiveFeatureFlagsChanged(original, current)
-	})
+	const hasChanges = computed(() =>
+		haveActiveFeatureFlagsChanged({
+			oldFFs: urlInfo.value.flags.on
+				.map(createActiveFeatureFlag)
+				.concat(urlInfo.value.flags.off.map(createInactiveFeatureFlag)),
+			newFFs: ffOn.value
+				.map(createActiveFeatureFlag)
+				.concat(ffOff.value.map(createInactiveFeatureFlag)),
+		}),
+	)
 
 	const newUrl = computed<URL | null>(() => {
 		const url = urlInfo.value.url
 		if (!url) {
 			return null
 		}
-		return createNewUrlWithActiveFlags(url, ffOn.value)
+		return createNewUrl({
+			currentUrlString: url,
+			flagsOn: ffOn.value,
+			flagsOff: ffOff.value,
+		})
 	})
 
 	return {
+		ffShelf,
 		ffOff,
 		ffOn,
 		reset,
-		removeFeatureFlag,
+		deleteFeatureFlag,
 		addFeatureFlag,
 		isInitialized,
 		hasChanges,
@@ -144,16 +188,24 @@ export const resetStore = (
 	}
 
 	const featureFlagsFromUrl = collectFeatureFlags(validUrl.searchParams)
+	const ffOffFromUrl = featureFlagsFromUrl
+		.filter((flag) => !flag.isActive)
+		.map((flag) => flag.parameter)
+	const ffOnFromUrl = featureFlagsFromUrl
 		.filter((flag) => flag.isActive)
 		.map((flag) => flag.parameter)
 
-	const urlInfo = {
+	const urlInfo: UrlInfo = {
 		url: payload.url,
 		hostname: validUrl.hostname,
-		featureFlags: featureFlagsFromUrl,
+		flags: {
+			off: ffOffFromUrl,
+			on: ffOnFromUrl,
+		},
 	}
 
 	const flags = {
+		shelf: new Set<string>(),
 		off: new Set<string>(),
 		on: new Set<string>(),
 	}
@@ -162,12 +214,16 @@ export const resetStore = (
 		if (flag.isActive) {
 			flags.on.add(flag.parameter)
 		} else {
-			flags.off.add(flag.parameter)
+			flags.shelf.add(flag.parameter)
 		}
 	}
-	for (const param of featureFlagsFromUrl) {
-		flags.off.delete(param)
+	for (const param of ffOnFromUrl) {
+		flags.shelf.delete(param)
 		flags.on.add(param)
+	}
+	for (const param of ffOffFromUrl) {
+		flags.shelf.delete(param)
+		flags.off.add(param)
 	}
 
 	store.reset({ type: 'valid', value: { urlInfo, flags } })
