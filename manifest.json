@@ -6,9 +6,10 @@
 	"description": "Easily manage URL feature flags",
 	"permissions": ["tabs", "storage"],
 	"icons": {
-		"24": "icons/icon24.png",
-		"36": "icons/icon36.png",
-		"48": "icons/icon48.png"
+		"16": "icons/icon16.png",
+		"32": "icons/icon32.png",
+		"48": "icons/icon48.png",
+		"128": "icons/icon128.png"
 	},
 	"background": {
 		"service_worker": "service-worker.js",
@@ -18,9 +19,10 @@
 		"default_popup": "src/index.html",
 		"default_title": "feature flagger",
 		"default_icon": {
-			"24": "icons/icon24.png",
-			"36": "icons/icon36.png",
-			"48": "icons/icon48.png"
+			"16": "icons/icon16.png",
+			"32": "icons/icon32.png",
+			"48": "icons/icon48.png",
+			"128": "icons/icon128.png"
 		}
 	}
 }
