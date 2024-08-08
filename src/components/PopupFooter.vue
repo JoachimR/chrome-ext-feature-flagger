@@ -37,7 +37,16 @@ const onSubmit = async () => {
 
 const newParam = ref<string>('')
 
-const newDisplayedUrl = computed(() => store.newUrl?.toString() || '')
+const newDisplayedUrl = computed(() => {
+	let strings = (store.newUrl?.toString() || '').split('?')
+	const base = strings[0]
+	const query = strings[1]
+	let baseEllipsis = base
+	if (base.length > 15) {
+		baseEllipsis = `${base.substring(0, 15)}...`
+	}
+	return `${baseEllipsis}?${query}`
+})
 
 const onAdd = () => {
 	const param = newParam.value.trim()

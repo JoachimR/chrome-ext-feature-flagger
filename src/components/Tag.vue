@@ -11,10 +11,18 @@ import { computed, defineEmits, defineProps } from 'vue'
 
 const props = defineProps<{
 	name: string
-	active: boolean
+	state: 'history' | 'off' | 'on'
 }>()
 
-const type = computed<string>(() => (props.active ? 'primary' : ''))
+const type = computed<string>(() => {
+	if (props.state === 'off') {
+		return 'danger'
+	}
+	if (props.state === 'on') {
+		return 'primary'
+	}
+	return 'default'
+})
 
 const emit = defineEmits<(e: 'close', name: string) => void>()
 

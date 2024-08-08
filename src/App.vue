@@ -70,6 +70,9 @@ body {
 .border-right {
   border-right: 1px solid #1c3967;
 }
+.border-top {
+  border-top: 1px solid #1c3967;
+}
 .margin-vertical-4px {
   margin-top: 4px;
   margin-bottom: 4px;
@@ -83,11 +86,17 @@ body {
 .padding-4px {
   padding: 4px;
 }
+.padding-bottom-4px {
+  padding-bottom: 4px;
+}
 .padding-horizontal-4px {
   padding-left: 4px;
   padding-right: 4px;
 }
 .display-inline {
   display: inline;
+}
+.text-align-center {
+  text-align: center;
 }
 </style>
