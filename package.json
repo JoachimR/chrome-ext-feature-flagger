@@ -9,7 +9,8 @@
 		"preview": "vite preview",
 		"typecheck": "vue-tsc -b --watch",
 		"unit": "vitest",
-		"lint": "biome check --write ./src"
+		"lint": "biome check --write ./src",
+		"lint-fix": "biome check --fix --unsafe ./src"
 	},
 	"dependencies": {
 		"equal-vue": "^0.79.3",
