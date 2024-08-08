@@ -1,7 +1,7 @@
 {
 	"manifest_version": 3,
 	"name": "feature flagger",
-	"version": "0.0.0.2",
+	"version": "0.2.0",
 	"homepage_url": "https://github.com/JoachimR/chrome-ext-feature-flagger",
 	"description": "Easily manage URL feature flags",
 	"permissions": ["tabs", "storage"],
